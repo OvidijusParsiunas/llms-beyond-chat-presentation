@@ -1081,6 +1081,587 @@
   .tf-box.tf-thinking {
     animation: tf-pulse 1100ms ease-out 2, cm-pulse-bg 1100ms ease-in-out 2;
   }
+
+  /* Tools · final 2 slide — stepped reveal:
+     0: default — frozen state inherited from slide 5 (chips show getForecast/
+        getStockPrice; question = Tesla; response = $370 answer)
+     1: chips swap to toggleLight()/toggleHeater()
+     2: response bubble fades out; question bubble swaps text to
+        "Turn on the light" via a quick fade-out / fade-in
+     3: LLM thinking pulse (cm-model-box)
+     4: cm-arrow-r reveals "toggleLight() + ON" overlay (replaces "Response")
+     5: Chat thinking pulse (cm-chat-box)
+     6: response bubble re-appears with "Done" */
+  section.slide[data-label="Tools · final 2"] .tf2-chip-new { display: none; }
+  section.slide[data-label="Tools · final 2"][data-tf2-step] .tf2-chip-old { display: none; }
+  section.slide[data-label="Tools · final 2"][data-tf2-step] .tf2-chip-new { display: inline; }
+
+  /* Question bubble text swap (instant, no fade) — at step 2+ "Tesla" is
+     replaced with "Turn on the light". The bubble itself stays visible. */
+  .tf2-bubble-q-toggle { display: none; }
+  section.slide[data-label="Tools · final 2"][data-tf2-step="2"] .cm-bubble-q .cm-bubble-stock,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="3"] .cm-bubble-q .cm-bubble-stock,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="4"] .cm-bubble-q .cm-bubble-stock,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="5"] .cm-bubble-q .cm-bubble-stock,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="6"] .cm-bubble-q .cm-bubble-stock { display: none; }
+  section.slide[data-label="Tools · final 2"][data-tf2-step="2"] .tf2-bubble-q-toggle,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="3"] .tf2-bubble-q-toggle,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="4"] .tf2-bubble-q-toggle,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="5"] .tf2-bubble-q-toggle,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="6"] .tf2-bubble-q-toggle { display: inline; }
+
+  /* Response bubble: hidden during steps 2-5; "Done" content only swaps in
+     at step 6, after the bubble has fully faded out — so "Done" never peeks
+     through during the fade. */
+  .tf2-bubble-r-toggle { display: none; }
+  section.slide[data-label="Tools · final 2"][data-tf2-step="2"] .cm-bubble-r,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="3"] .cm-bubble-r,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="4"] .cm-bubble-r,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="5"] .cm-bubble-r {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  section.slide[data-label="Tools · final 2"][data-tf2-step="6"] .cm-bubble-r .cm-bubble-stock { display: none; }
+  section.slide[data-label="Tools · final 2"][data-tf2-step="6"] .tf2-bubble-r-toggle { display: inline; }
+
+  /* tf2-resp-chip overlay swaps the cm-arrow-r2 "Response" label with the
+     "toggleLight() + ON" chip at steps 4-5, then back to "Response" at step 6
+     (when the response bubble re-appears with "Done"). cm-arrow-r2 has
+     overflow:hidden by default which would clip the taller chip — override
+     to visible on this slide. */
+  section.slide[data-label="Tools · final 2"] .cm-diagram .cm-arrow.cm-arrow-r2 {
+    overflow: visible;
+  }
+  section.slide[data-label="Tools · final 2"] .tf2-resp-chip {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    white-space: nowrap;
+    opacity: 0;
+  }
+  section.slide[data-label="Tools · final 2"][data-tf2-step="4"] .tf2-resp-chip,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="5"] .tf2-resp-chip,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="6"] .tf2-resp-chip {
+    opacity: 1;
+  }
+  section.slide[data-label="Tools · final 2"][data-tf2-step="4"] .cm-arrow-r2-text,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="5"] .cm-arrow-r2-text,
+  section.slide[data-label="Tools · final 2"][data-tf2-step="6"] .cm-arrow-r2-text {
+    opacity: 0;
+  }
+
+  /* === Slide 7 (.tf3-slide) — "Control temperature" stepped reveal ===
+     The slide enters frozen at slide 6's tf2-step=6 final state. On the
+     first click, data-tf3-step is set on the slide and the rules below
+     override the inherited state to play through a new flow:
+       0: default — frozen tf2-step=6 state (toggleLight/toggleHeater chips,
+          "Turn on the light" Q, "Done" R, "toggleLight() + ON" r2 chip)
+       1: clear bubbles, arrows, chips
+       2: question bubble re-appears with "Control temperature"
+       3: question arrow re-appears with "+ toggleHeater() + getTemperature()"
+       4: LLM thinks (cm-model-box pulse)
+       5: response arrow appears with "getTemperature()" chip
+       6: chat thinks (cm-chat-box pulse)
+       7: cm-arrow-19 appears with orange/brown "10°C"
+       8: LLM thinks again
+       9: cm-arrow-r2 reappears with "toggleHeater()" chip overlay
+      10: chat thinks
+      11: response bubble re-appears with "Done" */
+
+  /* Step 1+ : hide everything from the inherited tf2 final state. These
+     catch-all rules apply to every step that has data-tf3-step set; later
+     step-specific rules below re-show individual elements. The inherited
+     tf2 CSS uses `section.slide[data-label=...][data-tf2-step=...]`
+     selectors, which include a type selector — so all our overrides need
+     `section.slide.tf3-slide` (type + 2 classes) to outrank them. */
+  section.slide.tf3-slide[data-tf3-step] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step] .cm-diagram .cm-bubble-r,
+  section.slide.tf3-slide[data-tf3-step] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step] .cm-diagram .cm-tools-add {
+    opacity: 0;
+  }
+  section.slide.tf3-slide[data-tf3-step] .cm-diagram .cm-arrow.cm-arrow-r2 {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(8px);
+    /* Restore slide-4 default position (cm-arrow-r2 sits 87px below the
+       cm-arrows bottom). The inherited tf2 rule lifted it to -30px because
+       cm-arrow-r was hidden; in the tf3 flow cm-arrow-r becomes visible
+       again at step 5, so the lift no longer makes sense. */
+    top: calc(100% + 87px);
+  }
+  section.slide.tf3-slide[data-tf3-step] .tf2-resp-chip {
+    opacity: 0;
+  }
+
+  /* cm-bubble-q text variants: in the tf3 flow only "Control temperature"
+     shows. The inherited tf2-step=6 rules show .tf2-bubble-q-toggle ("Turn
+     on the light"); we hide every variant and reveal the new one. */
+  .tf3-bubble-q-temp { display: none; }
+  section.slide.tf3-slide[data-tf3-step] .cm-bubble-q .cm-bubble-old,
+  section.slide.tf3-slide[data-tf3-step] .cm-bubble-q .cm-bubble-new,
+  section.slide.tf3-slide[data-tf3-step] .cm-bubble-q .cm-bubble-stock,
+  section.slide.tf3-slide[data-tf3-step] .cm-bubble-q .tf2-bubble-q-toggle {
+    display: none;
+  }
+  section.slide.tf3-slide[data-tf3-step] .cm-bubble-q .tf3-bubble-q-temp {
+    display: inline;
+  }
+
+  /* Question-arrow chip swap: keep the first chip ("toggleLight()") as
+     inherited from tf2-step=6, and only swap the second chip's text from
+     "toggleHeater()" → "getTemperature()". Scope the tf2-chip-new hide to
+     `.cm-tools-stock` so the first chip is untouched. */
+  .tf3-chip-q2 { display: none; }
+  section.slide.tf3-slide[data-tf3-step] .cm-tools-stock .tf2-chip-new {
+    display: none;
+  }
+  section.slide.tf3-slide[data-tf3-step] .tf3-chip-q2 {
+    display: inline;
+  }
+
+  /* Step 2+ : cm-bubble-q re-appears (and stays visible through step 17 —
+     the original "Control temperature" question persists across the
+     Fail → retry loop). */
+  section.slide.tf3-slide[data-tf3-step="2"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="3"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="4"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="5"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="6"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="7"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="8"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="9"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="10"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="11"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="12"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="13"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="14"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="15"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="16"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide[data-tf3-step="17"] .cm-diagram .cm-bubble-q {
+    opacity: 1;
+  }
+
+  /* Step 3+ : cm-arrow-q + chips re-appear (and stay visible through 17) */
+  section.slide.tf3-slide[data-tf3-step="3"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="4"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="5"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="6"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="7"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="8"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="9"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="10"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="11"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="12"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="13"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="14"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="15"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="16"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="17"] .cm-diagram .cm-arrow-q,
+  section.slide.tf3-slide[data-tf3-step="3"] .cm-diagram .cm-tools-add,
+  section.slide.tf3-slide[data-tf3-step="4"] .cm-diagram .cm-tools-add,
+  section.slide.tf3-slide[data-tf3-step="5"] .cm-diagram .cm-tools-add,
+  section.slide.tf3-slide[data-tf3-step="6"] .cm-diagram .cm-tools-add,
+  section.slide.tf3-slide[data-tf3-step="7"] .cm-diagram .cm-tools-add,
+  section.slide.tf3-slide[data-tf3-step="8"] .cm-diagram .cm-tools-add,
+  section.slide.tf3-slide[data-tf3-step="9"] .cm-diagram .cm-tools-add,
+  section.slide.tf3-slide[data-tf3-step="10"] .cm-diagram .cm-tools-add,
+  section.slide.tf3-slide[data-tf3-step="11"] .cm-diagram .cm-tools-add,
+  section.slide.tf3-slide[data-tf3-step="12"] .cm-diagram .cm-tools-add,
+  section.slide.tf3-slide[data-tf3-step="13"] .cm-diagram .cm-tools-add,
+  section.slide.tf3-slide[data-tf3-step="14"] .cm-diagram .cm-tools-add,
+  section.slide.tf3-slide[data-tf3-step="15"] .cm-diagram .cm-tools-add,
+  section.slide.tf3-slide[data-tf3-step="16"] .cm-diagram .cm-tools-add,
+  section.slide.tf3-slide[data-tf3-step="17"] .cm-diagram .cm-tools-add {
+    opacity: 1;
+  }
+
+  /* Step 5+ : cm-arrow-r reveals "getTemperature()" chip overlay (replaces
+     the "Response" label). cm-arrow-r is a flex item so its line + chip
+     both share one row; let it overflow visible so the chip isn't clipped.
+     We also push it down with margin-top: cm-arrow-q's stacked chips
+     (toggleLight/getTemperature) overflow ~40px below their flex bound and
+     into the 56px gap, leaving the Response arrow visually crowded. */
+  section.slide.tf3-slide .cm-diagram .cm-arrow.cm-arrow-r {
+    overflow: visible;
+    margin-top: 30px;
+  }
+  section.slide.tf3-slide .tf3-resp-r-chip {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 300ms cubic-bezier(.2,.7,.2,1);
+  }
+  section.slide.tf3-slide[data-tf3-step="5"] .cm-diagram .cm-arrow-r,
+  section.slide.tf3-slide[data-tf3-step="6"] .cm-diagram .cm-arrow-r,
+  section.slide.tf3-slide[data-tf3-step="7"] .cm-diagram .cm-arrow-r,
+  section.slide.tf3-slide[data-tf3-step="8"] .cm-diagram .cm-arrow-r,
+  section.slide.tf3-slide[data-tf3-step="9"] .cm-diagram .cm-arrow-r,
+  section.slide.tf3-slide[data-tf3-step="10"] .cm-diagram .cm-arrow-r,
+  section.slide.tf3-slide[data-tf3-step="11"] .cm-diagram .cm-arrow-r,
+  section.slide.tf3-slide[data-tf3-step="12"] .cm-diagram .cm-arrow-r,
+  section.slide.tf3-slide[data-tf3-step="13"] .cm-diagram .cm-arrow-r,
+  section.slide.tf3-slide[data-tf3-step="14"] .cm-diagram .cm-arrow-r,
+  section.slide.tf3-slide[data-tf3-step="15"] .cm-diagram .cm-arrow-r,
+  section.slide.tf3-slide[data-tf3-step="16"] .cm-diagram .cm-arrow-r,
+  section.slide.tf3-slide[data-tf3-step="17"] .cm-diagram .cm-arrow-r {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  section.slide.tf3-slide[data-tf3-step="5"] .tf3-resp-r-chip,
+  section.slide.tf3-slide[data-tf3-step="6"] .tf3-resp-r-chip,
+  section.slide.tf3-slide[data-tf3-step="7"] .tf3-resp-r-chip,
+  section.slide.tf3-slide[data-tf3-step="8"] .tf3-resp-r-chip,
+  section.slide.tf3-slide[data-tf3-step="9"] .tf3-resp-r-chip,
+  section.slide.tf3-slide[data-tf3-step="10"] .tf3-resp-r-chip,
+  section.slide.tf3-slide[data-tf3-step="11"] .tf3-resp-r-chip,
+  section.slide.tf3-slide[data-tf3-step="12"] .tf3-resp-r-chip,
+  section.slide.tf3-slide[data-tf3-step="13"] .tf3-resp-r-chip,
+  section.slide.tf3-slide[data-tf3-step="14"] .tf3-resp-r-chip,
+  section.slide.tf3-slide[data-tf3-step="15"] .tf3-resp-r-chip,
+  section.slide.tf3-slide[data-tf3-step="16"] .tf3-resp-r-chip,
+  section.slide.tf3-slide[data-tf3-step="17"] .tf3-resp-r-chip {
+    opacity: 1;
+  }
+  section.slide.tf3-slide[data-tf3-step="5"] .cm-diagram .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide[data-tf3-step="6"] .cm-diagram .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide[data-tf3-step="7"] .cm-diagram .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide[data-tf3-step="8"] .cm-diagram .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide[data-tf3-step="9"] .cm-diagram .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide[data-tf3-step="10"] .cm-diagram .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide[data-tf3-step="11"] .cm-diagram .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide[data-tf3-step="12"] .cm-diagram .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide[data-tf3-step="13"] .cm-diagram .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide[data-tf3-step="14"] .cm-diagram .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide[data-tf3-step="15"] .cm-diagram .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide[data-tf3-step="16"] .cm-diagram .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide[data-tf3-step="17"] .cm-diagram .cm-arrow-r .cm-resp-text {
+    opacity: 0;
+  }
+
+  /* Step 7+ : cm-arrow-19 appears with "10°C" orange/brown text. The
+     existing tools-step="20" rule would otherwise show this arrow at slide
+     entry; force it hidden by default and reveal at step 7. */
+  section.slide.tf3-slide .cm-diagram .cm-arrow.cm-arrow-19 {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  section.slide.tf3-slide[data-tf3-step="7"] .cm-diagram .cm-arrow.cm-arrow-19,
+  section.slide.tf3-slide[data-tf3-step="8"] .cm-diagram .cm-arrow.cm-arrow-19,
+  section.slide.tf3-slide[data-tf3-step="9"] .cm-diagram .cm-arrow.cm-arrow-19,
+  section.slide.tf3-slide[data-tf3-step="10"] .cm-diagram .cm-arrow.cm-arrow-19,
+  section.slide.tf3-slide[data-tf3-step="11"] .cm-diagram .cm-arrow.cm-arrow-19,
+  section.slide.tf3-slide[data-tf3-step="12"] .cm-diagram .cm-arrow.cm-arrow-19,
+  section.slide.tf3-slide[data-tf3-step="13"] .cm-diagram .cm-arrow.cm-arrow-19,
+  section.slide.tf3-slide[data-tf3-step="14"] .cm-diagram .cm-arrow.cm-arrow-19,
+  section.slide.tf3-slide[data-tf3-step="15"] .cm-diagram .cm-arrow.cm-arrow-19,
+  section.slide.tf3-slide[data-tf3-step="16"] .cm-diagram .cm-arrow.cm-arrow-19,
+  section.slide.tf3-slide[data-tf3-step="17"] .cm-diagram .cm-arrow.cm-arrow-19 {
+    max-height: 120px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Step 9+ : cm-arrow-r2 reappears with "toggleHeater()" chip overlay
+     (replaces the inherited "toggleLight() + ON" overlay, which was hidden
+     by the catch-all rule at step 1). */
+  section.slide.tf3-slide .tf3-resp-r2-chip {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 300ms cubic-bezier(.2,.7,.2,1);
+  }
+  section.slide.tf3-slide[data-tf3-step="9"] .cm-diagram .cm-arrow.cm-arrow-r2,
+  section.slide.tf3-slide[data-tf3-step="10"] .cm-diagram .cm-arrow.cm-arrow-r2,
+  section.slide.tf3-slide[data-tf3-step="11"] .cm-diagram .cm-arrow.cm-arrow-r2,
+  section.slide.tf3-slide[data-tf3-step="12"] .cm-diagram .cm-arrow.cm-arrow-r2,
+  section.slide.tf3-slide[data-tf3-step="13"] .cm-diagram .cm-arrow.cm-arrow-r2,
+  section.slide.tf3-slide[data-tf3-step="14"] .cm-diagram .cm-arrow.cm-arrow-r2,
+  section.slide.tf3-slide[data-tf3-step="15"] .cm-diagram .cm-arrow.cm-arrow-r2,
+  section.slide.tf3-slide[data-tf3-step="16"] .cm-diagram .cm-arrow.cm-arrow-r2,
+  section.slide.tf3-slide[data-tf3-step="17"] .cm-diagram .cm-arrow.cm-arrow-r2 {
+    max-height: 120px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  section.slide.tf3-slide[data-tf3-step="9"] .tf3-resp-r2-chip,
+  section.slide.tf3-slide[data-tf3-step="10"] .tf3-resp-r2-chip,
+  section.slide.tf3-slide[data-tf3-step="11"] .tf3-resp-r2-chip,
+  section.slide.tf3-slide[data-tf3-step="12"] .tf3-resp-r2-chip,
+  section.slide.tf3-slide[data-tf3-step="13"] .tf3-resp-r2-chip,
+  section.slide.tf3-slide[data-tf3-step="14"] .tf3-resp-r2-chip,
+  section.slide.tf3-slide[data-tf3-step="15"] .tf3-resp-r2-chip,
+  section.slide.tf3-slide[data-tf3-step="16"] .tf3-resp-r2-chip,
+  section.slide.tf3-slide[data-tf3-step="17"] .tf3-resp-r2-chip {
+    opacity: 1;
+  }
+  section.slide.tf3-slide[data-tf3-step="9"] .cm-diagram .cm-arrow-r2 .cm-arrow-r2-text,
+  section.slide.tf3-slide[data-tf3-step="10"] .cm-diagram .cm-arrow-r2 .cm-arrow-r2-text,
+  section.slide.tf3-slide[data-tf3-step="11"] .cm-diagram .cm-arrow-r2 .cm-arrow-r2-text,
+  section.slide.tf3-slide[data-tf3-step="12"] .cm-diagram .cm-arrow-r2 .cm-arrow-r2-text,
+  section.slide.tf3-slide[data-tf3-step="13"] .cm-diagram .cm-arrow-r2 .cm-arrow-r2-text,
+  section.slide.tf3-slide[data-tf3-step="14"] .cm-diagram .cm-arrow-r2 .cm-arrow-r2-text,
+  section.slide.tf3-slide[data-tf3-step="15"] .cm-diagram .cm-arrow-r2 .cm-arrow-r2-text,
+  section.slide.tf3-slide[data-tf3-step="16"] .cm-diagram .cm-arrow-r2 .cm-arrow-r2-text,
+  section.slide.tf3-slide[data-tf3-step="17"] .cm-diagram .cm-arrow-r2 .cm-arrow-r2-text {
+    opacity: 0;
+  }
+
+  /* Step 11, 12, 17 : cm-bubble-r is visible. The existing
+     .tf2-bubble-r-toggle span carries "Done" and the inherited tf2-step=6
+     rules display it. The bubble disappears at step 13 (when the chat
+     sends "Fail" back) and re-appears at step 17. */
+  section.slide.tf3-slide[data-tf3-step="11"] .cm-diagram .cm-bubble-r,
+  section.slide.tf3-slide[data-tf3-step="12"] .cm-diagram .cm-bubble-r,
+  section.slide.tf3-slide[data-tf3-step="17"] .cm-diagram .cm-bubble-r {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Step 12+ : only the arrows column slides up — Chat and LLM boxes stay
+     put so they don't collide with the title. The absolute-positioned
+     arrows below cm-arrows (cm-arrow-19, r2, fail, retry) move with it,
+     freeing vertical space at the bottom for the retry-loop arrows. */
+  section.slide.tf3-slide .cm-diagram .cm-arrows {
+    transition: transform 600ms cubic-bezier(.2,.7,.2,1);
+  }
+  section.slide.tf3-slide[data-tf3-step="12"] .cm-diagram .cm-arrows,
+  section.slide.tf3-slide[data-tf3-step="13"] .cm-diagram .cm-arrows,
+  section.slide.tf3-slide[data-tf3-step="14"] .cm-diagram .cm-arrows,
+  section.slide.tf3-slide[data-tf3-step="15"] .cm-diagram .cm-arrows,
+  section.slide.tf3-slide[data-tf3-step="16"] .cm-diagram .cm-arrows,
+  section.slide.tf3-slide[data-tf3-step="17"] .cm-diagram .cm-arrows {
+    transform: translateY(-170px);
+  }
+
+  /* The two new "Fail → retry" arrows are absolutely positioned below the
+     existing cm-arrow-r2, mirroring the cm-arrow-19 / cm-arrow-r2 pattern.
+     Default: hidden. Step 13+ reveals "Fail"; step 15+ reveals retry. */
+  section.slide.tf3-slide .cm-diagram .cm-arrow.cm-arrow-fail,
+  section.slide.tf3-slide .cm-diagram .cm-arrow.cm-arrow-retry {
+    position: absolute;
+    left: 0;
+    right: 0;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(8px);
+    transition:
+      max-height 450ms cubic-bezier(.2,.7,.2,1),
+      opacity 500ms cubic-bezier(.2,.7,.2,1),
+      transform 500ms cubic-bezier(.2,.7,.2,1),
+      top 500ms cubic-bezier(.2,.7,.2,1);
+  }
+  section.slide.tf3-slide .cm-diagram .cm-arrow.cm-arrow-fail {
+    top: calc(100% + 178px);
+  }
+  section.slide.tf3-slide .cm-diagram .cm-arrow.cm-arrow-retry {
+    top: calc(100% + 269px);
+  }
+  section.slide.tf3-slide[data-tf3-step="13"] .cm-diagram .cm-arrow.cm-arrow-fail,
+  section.slide.tf3-slide[data-tf3-step="14"] .cm-diagram .cm-arrow.cm-arrow-fail,
+  section.slide.tf3-slide[data-tf3-step="15"] .cm-diagram .cm-arrow.cm-arrow-fail,
+  section.slide.tf3-slide[data-tf3-step="16"] .cm-diagram .cm-arrow.cm-arrow-fail,
+  section.slide.tf3-slide[data-tf3-step="17"] .cm-diagram .cm-arrow.cm-arrow-fail {
+    max-height: 120px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  section.slide.tf3-slide[data-tf3-step="15"] .cm-diagram .cm-arrow.cm-arrow-retry,
+  section.slide.tf3-slide[data-tf3-step="16"] .cm-diagram .cm-arrow.cm-arrow-retry,
+  section.slide.tf3-slide[data-tf3-step="17"] .cm-diagram .cm-arrow.cm-arrow-retry {
+    max-height: 120px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* === Slide 8 (.pkmn-slide) — Pokemon retry flow ===
+     Slide enters frozen at the inherited tf3-step="17" final state. On the
+     first click, data-pkmn-step is set on the slide and the rules below
+     override the inherited visuals to play through a Pokemon-themed flow:
+       1: clear bubbles + arrow text/badges (lines stay visible)
+       2: bubble-q "Next move"
+       3: cm-arrow-q "Question / Context + move() / attack()"
+       4: LLM thinks
+       5: cm-arrow-r attack() chip
+       6: Chat thinks
+       7: cm-arrow-19 "10HP" (orange)
+       8: LLM thinks
+       9: cm-arrow-r2 attack() chip
+      10: Chat thinks
+      11: cm-arrow-fail "0HP" (orange)
+      12: LLM thinks
+      13: cm-arrow-retry move() chip */
+
+  /* All pkmn variant text/chips hidden by default */
+  .pkmn-bubble-q,
+  .pkmn-q-text-new,
+  .pkmn-chip-1,
+  .pkmn-chip-2,
+  .pkmn-arrow-19-text,
+  .pkmn-arrow-fail-text,
+  .pkmn-arrow-retry-chip {
+    display: none;
+  }
+
+  /* pkmn chip overlays — absolute-positioned + opacity-fade like .tf3-resp-* */
+  section.slide.tf3-slide.pkmn-slide .pkmn-resp-r-chip,
+  section.slide.tf3-slide.pkmn-slide .pkmn-resp-r2-chip {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 300ms cubic-bezier(.2,.7,.2,1);
+  }
+
+  /* Step 1+ : hide everything from the inherited tf3-step="17" final state.
+     Bubbles fade to opacity 0; for arrows we hide just the text container
+     (the second flex child) so the arrow line itself stays visible. */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .cm-diagram .cm-bubble-r {
+    opacity: 0;
+    transition: opacity 300ms cubic-bezier(.2,.7,.2,1);
+  }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .cm-diagram .cm-arrow > div:nth-child(2) {
+    opacity: 0;
+    transition: opacity 300ms cubic-bezier(.2,.7,.2,1);
+  }
+  /* Hide inherited tf3 chip overlays so only pkmn variants remain */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .tf3-resp-r-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .tf3-resp-r2-chip {
+    opacity: 0;
+  }
+
+  /* Text/chip variant swap: pkmn replaces tf3/tf2 text wherever pkmn-step set */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .cm-bubble-q .tf3-bubble-q-temp { display: none; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .cm-bubble-q .pkmn-bubble-q { display: inline; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .pkmn-q-text-old { display: none; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .pkmn-q-text-new { display: inline; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .cm-tools-add .tf2-chip-new { display: none; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .cm-tools-add .tf3-chip-q2 { display: none; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .cm-tools-add .pkmn-chip-1 { display: inline; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .cm-tools-add .pkmn-chip-2 { display: inline; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .tf3-arrow-19-text { display: none; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .pkmn-arrow-19-text { display: block; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .tf3-arrow-fail-text { display: none; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .pkmn-arrow-fail-text { display: block; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .tf3-arrow-retry-chip { display: none; }
+
+  /* Step 2+ : bubble-q reappears with "Next move" */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="2"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="3"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="4"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="5"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="6"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="7"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="8"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="9"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="10"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="11"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="12"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="13"] .cm-diagram .cm-bubble-q {
+    opacity: 1;
+  }
+
+  /* Step 3+ : cm-arrow-q text + chips reappear ("Question / Context + move() / attack()") */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="3"] .cm-diagram .cm-arrow-q > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="4"] .cm-diagram .cm-arrow-q > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="5"] .cm-diagram .cm-arrow-q > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="6"] .cm-diagram .cm-arrow-q > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="7"] .cm-diagram .cm-arrow-q > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="8"] .cm-diagram .cm-arrow-q > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="9"] .cm-diagram .cm-arrow-q > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="10"] .cm-diagram .cm-arrow-q > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="11"] .cm-diagram .cm-arrow-q > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="12"] .cm-diagram .cm-arrow-q > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="13"] .cm-diagram .cm-arrow-q > div:nth-child(2) {
+    opacity: 1;
+  }
+
+  /* Step 5+ : cm-arrow-r text container + pkmn attack() chip overlay show.
+     The cm-resp-text "Response" label inherits opacity:0 from the tf3 rules
+     at this slide's data-tf3-step="17", so only the chip is actually visible. */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="5"] .cm-diagram .cm-arrow-r > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="6"] .cm-diagram .cm-arrow-r > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="7"] .cm-diagram .cm-arrow-r > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="8"] .cm-diagram .cm-arrow-r > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="9"] .cm-diagram .cm-arrow-r > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="10"] .cm-diagram .cm-arrow-r > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="11"] .cm-diagram .cm-arrow-r > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="12"] .cm-diagram .cm-arrow-r > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="13"] .cm-diagram .cm-arrow-r > div:nth-child(2) {
+    opacity: 1;
+  }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="5"] .pkmn-resp-r-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="6"] .pkmn-resp-r-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="7"] .pkmn-resp-r-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="8"] .pkmn-resp-r-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="9"] .pkmn-resp-r-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="10"] .pkmn-resp-r-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="11"] .pkmn-resp-r-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="12"] .pkmn-resp-r-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="13"] .pkmn-resp-r-chip {
+    opacity: 1;
+  }
+
+  /* Step 7+ : cm-arrow-19 text container shows ("10HP" via display swap) */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="7"] .cm-diagram .cm-arrow.cm-arrow-19 > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="8"] .cm-diagram .cm-arrow.cm-arrow-19 > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="9"] .cm-diagram .cm-arrow.cm-arrow-19 > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="10"] .cm-diagram .cm-arrow.cm-arrow-19 > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="11"] .cm-diagram .cm-arrow.cm-arrow-19 > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="12"] .cm-diagram .cm-arrow.cm-arrow-19 > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="13"] .cm-diagram .cm-arrow.cm-arrow-19 > div:nth-child(2) {
+    opacity: 1;
+  }
+
+  /* Step 9+ : cm-arrow-r2 text container + pkmn attack() chip overlay show */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="9"] .cm-diagram .cm-arrow.cm-arrow-r2 > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="10"] .cm-diagram .cm-arrow.cm-arrow-r2 > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="11"] .cm-diagram .cm-arrow.cm-arrow-r2 > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="12"] .cm-diagram .cm-arrow.cm-arrow-r2 > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="13"] .cm-diagram .cm-arrow.cm-arrow-r2 > div:nth-child(2) {
+    opacity: 1;
+  }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="9"] .pkmn-resp-r2-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="10"] .pkmn-resp-r2-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="11"] .pkmn-resp-r2-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="12"] .pkmn-resp-r2-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="13"] .pkmn-resp-r2-chip {
+    opacity: 1;
+  }
+
+  /* Step 11+ : cm-arrow-fail text container shows ("0HP" via display swap) */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="11"] .cm-diagram .cm-arrow.cm-arrow-fail > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="12"] .cm-diagram .cm-arrow.cm-arrow-fail > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="13"] .cm-diagram .cm-arrow.cm-arrow-fail > div:nth-child(2) {
+    opacity: 1;
+  }
+
+  /* Step 12 : LLM thinking pulse — handled in JS, no CSS gating needed. */
+
+  /* Step 13 : cm-arrow-retry text container + pkmn move() chip reveal */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="13"] .cm-diagram .cm-arrow.cm-arrow-retry > div:nth-child(2) {
+    opacity: 1;
+  }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="13"] .pkmn-arrow-retry-chip {
+    display: inline-block;
+  }
 </style>
 </head>
 <body>
@@ -1612,8 +2193,8 @@
         <div class="cm-label cm-chat-label" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 56px; color: var(--ink); letter-spacing: -0.01em;">Chat</div>
         <div class="cm-chat-box" style="width: 380px; height: 500px; background: #3a3a38; border-radius: 28px; padding: 22px 18px; display:flex; flex-direction:column; justify-content: space-between; box-shadow: 6px 6px 0 rgba(0,0,0,0.08); border: 1px solid #2a2a28;">
           <div style="display:flex; flex-direction:column; gap: 14px;">
-            <div class="cm-bubble cm-bubble-q cm-on" style="align-self: flex-end; background: rgb(117, 117, 117); color: #fff; border-radius: 14px 14px 4px 14px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 85%;"><span class="cm-bubble-old">How are you doing?</span><span class="cm-bubble-new">What is the weather in Tokyo?</span><span class="cm-bubble-stock">What is the stock price of Tesla?</span></div>
-            <div class="cm-bubble cm-bubble-r cm-on" style="align-self: flex-start; background:#e8e3d5; color:#1b1b1a; border-radius: 14px 14px 14px 4px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 70%;"><span class="cm-bubble-old">I'm doing great, thanks for asking!</span><span class="cm-bubble-new">Tokyo is currently around 19°C and partly cloudy</span><span class="cm-bubble-stock">It's trading around the mid-$370 range today.</span></div>
+            <div class="cm-bubble cm-bubble-q cm-on" style="align-self: flex-end; background: rgb(117, 117, 117); color: #fff; border-radius: 14px 14px 4px 14px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 85%;"><span class="cm-bubble-old">How are you doing?</span><span class="cm-bubble-new">What is the weather in Tokyo?</span><span class="cm-bubble-stock">What is the stock price of Tesla?</span><span class="tf2-bubble-q-toggle">Turn on the light</span></div>
+            <div class="cm-bubble cm-bubble-r cm-on" style="align-self: flex-start; background:#e8e3d5; color:#1b1b1a; border-radius: 14px 14px 14px 4px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 70%;"><span class="cm-bubble-old">I'm doing great, thanks for asking!</span><span class="cm-bubble-new">Tokyo is currently around 19°C and partly cloudy</span><span class="cm-bubble-stock">It's trading around the mid-$370 range today.</span><span class="tf2-bubble-r-toggle">Done</span></div>
           </div>
           <div class="cm-input" style="display:flex; align-items:center; gap: 10px; background:#55534f; border-radius: 10px; padding: 12px 14px;">
             <div style="flex:1; color:#f2ede1; font-size: 24px;">Input</div>
@@ -1638,8 +2219,8 @@
             <div class="cm-tools-add">
               <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">+</span>
               <span class="cm-forecast-wrap">
-                <span class="chip">getForecast()</span>
-                <span class="chip cm-tools-stock">getStockPrice()</span>
+                <span class="chip"><span class="tf2-chip-old">getForecast()</span><span class="tf2-chip-new">toggleLight()</span></span>
+                <span class="chip cm-tools-stock"><span class="tf2-chip-old">getStockPrice()</span><span class="tf2-chip-new">toggleHeater()</span></span>
               </span>
             </div>
           </div>
@@ -1658,7 +2239,341 @@
             <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 18px solid var(--ink);"></div>
             <div style="flex:1; height: 3px; background: var(--ink);"></div>
           </div>
-          <div class="cm-arrow-r2-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
+          <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="cm-arrow-r2-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
+            <span class="tf2-resp-chip"><span class="chip">toggleLight()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODEL SIDE -->
+      <div class="cm-model-wrap" style="display:flex; flex-direction:column; align-items:center; gap: 28px;">
+        <div class="cm-label cm-model-label" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 56px; color: var(--ink); letter-spacing: -0.01em;">LLM</div>
+        <div class="cm-model-box" style="width: 380px; height: 380px; background: #3a3a38; border-radius: 28px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 24px; box-sizing: border-box; box-shadow: 6px 6px 0 rgba(0,0,0,0.08); border: 1px solid #2a2a28; color:#f2ede1; position: relative;">
+          <svg class="cm-viz cm-viz-nn" viewBox="0 0 320 200" width="85%" height="70%" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style="display:block;">
+            <g stroke="#e8e3d5" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.85">
+              <line x1="20"  y1="20"  x2="113" y2="20"/>
+              <line x1="20"  y1="20"  x2="113" y2="73"/>
+              <line x1="20"  y1="20"  x2="113" y2="127"/>
+              <line x1="20"  y1="20"  x2="113" y2="180"/>
+              <line x1="20"  y1="73"  x2="113" y2="20"/>
+              <line x1="20"  y1="73"  x2="113" y2="73"/>
+              <line x1="20"  y1="73"  x2="113" y2="127"/>
+              <line x1="20"  y1="73"  x2="113" y2="180"/>
+              <line x1="20"  y1="127" x2="113" y2="20"/>
+              <line x1="20"  y1="127" x2="113" y2="73"/>
+              <line x1="20"  y1="127" x2="113" y2="127"/>
+              <line x1="20"  y1="127" x2="113" y2="180"/>
+              <line x1="20"  y1="180" x2="113" y2="20"/>
+              <line x1="20"  y1="180" x2="113" y2="73"/>
+              <line x1="20"  y1="180" x2="113" y2="127"/>
+              <line x1="20"  y1="180" x2="113" y2="180"/>
+              <line x1="113" y1="20"  x2="207" y2="40"/>
+              <line x1="113" y1="20"  x2="207" y2="100"/>
+              <line x1="113" y1="20"  x2="207" y2="160"/>
+              <line x1="113" y1="73"  x2="207" y2="40"/>
+              <line x1="113" y1="73"  x2="207" y2="100"/>
+              <line x1="113" y1="73"  x2="207" y2="160"/>
+              <line x1="113" y1="127" x2="207" y2="40"/>
+              <line x1="113" y1="127" x2="207" y2="100"/>
+              <line x1="113" y1="127" x2="207" y2="160"/>
+              <line x1="113" y1="180" x2="207" y2="40"/>
+              <line x1="113" y1="180" x2="207" y2="100"/>
+              <line x1="113" y1="180" x2="207" y2="160"/>
+              <line x1="207" y1="40"  x2="300" y2="40"/>
+              <line x1="207" y1="40"  x2="300" y2="100"/>
+              <line x1="207" y1="40"  x2="300" y2="160"/>
+              <line x1="207" y1="100" x2="300" y2="40"/>
+              <line x1="207" y1="100" x2="300" y2="100"/>
+              <line x1="207" y1="100" x2="300" y2="160"/>
+              <line x1="207" y1="160" x2="300" y2="40"/>
+              <line x1="207" y1="160" x2="300" y2="100"/>
+              <line x1="207" y1="160" x2="300" y2="160"/>
+            </g>
+            <g fill="#e8e3d5">
+              <circle cx="20"  cy="20"  r="10"/>
+              <circle cx="20"  cy="73"  r="10"/>
+              <circle cx="20"  cy="127" r="10"/>
+              <circle cx="20"  cy="180" r="10"/>
+              <circle cx="113" cy="20"  r="10"/>
+              <circle cx="113" cy="73"  r="10"/>
+              <circle cx="113" cy="127" r="10"/>
+              <circle cx="113" cy="180" r="10"/>
+              <circle cx="207" cy="40"  r="10"/>
+              <circle cx="207" cy="100" r="10"/>
+              <circle cx="207" cy="160" r="10"/>
+              <circle cx="300" cy="40"  r="10"/>
+              <circle cx="300" cy="100" r="10"/>
+              <circle cx="300" cy="160" r="10"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4d. TOOLS · FINAL 3 — slide 7. Enters frozen at slide 6's step-6
+       end-state (data-tf2-step="6" + data-label inherits the existing
+       tf2 styling). On the first click we set data-tf3-step which the
+       .tf3-slide-scoped CSS uses to clear that state and play through a
+       new 11-step "control temperature" sequence. -->
+  <section class="slide tf3-slide" data-label="Tools · final 2" data-tools-step="20" data-tools-content="stock" data-tf2-step="6" data-tf3-step="1">
+    <div class="chrome top"><span><span class="dot"></span>Chapter 01 · Foundations</span><span>07 / 17</span></div>
+    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>基本のチャット</div>
+    <h2 class="title" style="font-weight: 600; margin-top: 24px; margin-bottom: 37px;">Tools</h2>
+
+    <div class="cm-diagram" data-cm-step="12" style="display:grid; grid-template-columns: 1fr 1.1fr 1fr; align-items:center; gap: 40px; margin-top: 40px;">
+
+      <!-- CHAT SIDE -->
+      <div class="cm-chat-wrap" style="display:flex; flex-direction:column; align-items:center; gap: 28px;">
+        <div class="cm-label cm-chat-label" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 56px; color: var(--ink); letter-spacing: -0.01em;">Chat</div>
+        <div class="cm-chat-box" style="width: 380px; height: 500px; background: #3a3a38; border-radius: 28px; padding: 22px 18px; display:flex; flex-direction:column; justify-content: space-between; box-shadow: 6px 6px 0 rgba(0,0,0,0.08); border: 1px solid #2a2a28;">
+          <div style="display:flex; flex-direction:column; gap: 14px;">
+            <div class="cm-bubble cm-bubble-q cm-on" style="align-self: flex-end; background: rgb(117, 117, 117); color: #fff; border-radius: 14px 14px 4px 14px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 85%;"><span class="cm-bubble-old">How are you doing?</span><span class="cm-bubble-new">What is the weather in Tokyo?</span><span class="cm-bubble-stock">What is the stock price of Tesla?</span><span class="tf2-bubble-q-toggle">Turn on the light</span><span class="tf3-bubble-q-temp">Control temperature</span></div>
+            <div class="cm-bubble cm-bubble-r cm-on" style="align-self: flex-start; background:#e8e3d5; color:#1b1b1a; border-radius: 14px 14px 14px 4px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 70%;"><span class="cm-bubble-old">I'm doing great, thanks for asking!</span><span class="cm-bubble-new">Tokyo is currently around 19°C and partly cloudy</span><span class="cm-bubble-stock">It's trading around the mid-$370 range today.</span><span class="tf2-bubble-r-toggle">Done</span></div>
+          </div>
+          <div class="cm-input" style="display:flex; align-items:center; gap: 10px; background:#55534f; border-radius: 10px; padding: 12px 14px;">
+            <div style="flex:1; color:#f2ede1; font-size: 24px;">Input</div>
+            <div style="width: 52px; height: 26px; background:#8a8681; border-radius: 4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARROWS -->
+      <div class="cm-arrows" style="display:flex; flex-direction:column; gap: 56px; align-items:stretch; padding: 60px 0;">
+        <div class="cm-arrow cm-arrow-q cm-on" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
+          </div>
+          <div style="display:flex; align-items:center; white-space: nowrap;">
+            <div style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Question</div>
+            <div class="cm-tools-add">
+              <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">+</span>
+              <span class="cm-forecast-wrap">
+                <span class="chip"><span class="tf2-chip-old">getForecast()</span><span class="tf2-chip-new">toggleLight()</span></span>
+                <span class="chip cm-tools-stock"><span class="tf2-chip-old">getStockPrice()</span><span class="tf2-chip-new">toggleHeater()</span><span class="tf3-chip-q2">getTemperature()</span></span>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="cm-arrow cm-arrow-r" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 18px solid var(--ink);"></div>
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="cm-resp-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
+            <span class="tf3-resp-r-chip"><span class="chip">getTemperature()</span></span>
+          </div>
+        </div>
+        <div class="cm-arrow cm-arrow-19" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="tf3-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">10°C</div>
+          </div>
+        </div>
+        <div class="cm-arrow cm-arrow-r2" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 18px solid var(--ink);"></div>
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="cm-arrow-r2-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
+            <span class="tf2-resp-chip"><span class="chip">toggleLight()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+            <span class="tf3-resp-r2-chip"><span class="chip">toggleHeater()</span></span>
+          </div>
+        </div>
+        <!-- Step 13+: Chat → LLM "Fail" arrow (orange/brown text, same direction
+             as cm-arrow-19) -->
+        <div class="cm-arrow cm-arrow-fail" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="tf3-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">Fail</div>
+          </div>
+        </div>
+        <!-- Step 15+: LLM → Chat retry arrow with toggleHeater() badge -->
+        <div class="cm-arrow cm-arrow-retry" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 18px solid var(--ink);"></div>
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: center;">
+            <span class="chip">toggleHeater()</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODEL SIDE -->
+      <div class="cm-model-wrap" style="display:flex; flex-direction:column; align-items:center; gap: 28px;">
+        <div class="cm-label cm-model-label" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 56px; color: var(--ink); letter-spacing: -0.01em;">LLM</div>
+        <div class="cm-model-box" style="width: 380px; height: 380px; background: #3a3a38; border-radius: 28px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 24px; box-sizing: border-box; box-shadow: 6px 6px 0 rgba(0,0,0,0.08); border: 1px solid #2a2a28; color:#f2ede1; position: relative;">
+          <svg class="cm-viz cm-viz-nn" viewBox="0 0 320 200" width="85%" height="70%" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style="display:block;">
+            <g stroke="#e8e3d5" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.85">
+              <line x1="20"  y1="20"  x2="113" y2="20"/>
+              <line x1="20"  y1="20"  x2="113" y2="73"/>
+              <line x1="20"  y1="20"  x2="113" y2="127"/>
+              <line x1="20"  y1="20"  x2="113" y2="180"/>
+              <line x1="20"  y1="73"  x2="113" y2="20"/>
+              <line x1="20"  y1="73"  x2="113" y2="73"/>
+              <line x1="20"  y1="73"  x2="113" y2="127"/>
+              <line x1="20"  y1="73"  x2="113" y2="180"/>
+              <line x1="20"  y1="127" x2="113" y2="20"/>
+              <line x1="20"  y1="127" x2="113" y2="73"/>
+              <line x1="20"  y1="127" x2="113" y2="127"/>
+              <line x1="20"  y1="127" x2="113" y2="180"/>
+              <line x1="20"  y1="180" x2="113" y2="20"/>
+              <line x1="20"  y1="180" x2="113" y2="73"/>
+              <line x1="20"  y1="180" x2="113" y2="127"/>
+              <line x1="20"  y1="180" x2="113" y2="180"/>
+              <line x1="113" y1="20"  x2="207" y2="40"/>
+              <line x1="113" y1="20"  x2="207" y2="100"/>
+              <line x1="113" y1="20"  x2="207" y2="160"/>
+              <line x1="113" y1="73"  x2="207" y2="40"/>
+              <line x1="113" y1="73"  x2="207" y2="100"/>
+              <line x1="113" y1="73"  x2="207" y2="160"/>
+              <line x1="113" y1="127" x2="207" y2="40"/>
+              <line x1="113" y1="127" x2="207" y2="100"/>
+              <line x1="113" y1="127" x2="207" y2="160"/>
+              <line x1="113" y1="180" x2="207" y2="40"/>
+              <line x1="113" y1="180" x2="207" y2="100"/>
+              <line x1="113" y1="180" x2="207" y2="160"/>
+              <line x1="207" y1="40"  x2="300" y2="40"/>
+              <line x1="207" y1="40"  x2="300" y2="100"/>
+              <line x1="207" y1="40"  x2="300" y2="160"/>
+              <line x1="207" y1="100" x2="300" y2="40"/>
+              <line x1="207" y1="100" x2="300" y2="100"/>
+              <line x1="207" y1="100" x2="300" y2="160"/>
+              <line x1="207" y1="160" x2="300" y2="40"/>
+              <line x1="207" y1="160" x2="300" y2="100"/>
+              <line x1="207" y1="160" x2="300" y2="160"/>
+            </g>
+            <g fill="#e8e3d5">
+              <circle cx="20"  cy="20"  r="10"/>
+              <circle cx="20"  cy="73"  r="10"/>
+              <circle cx="20"  cy="127" r="10"/>
+              <circle cx="20"  cy="180" r="10"/>
+              <circle cx="113" cy="20"  r="10"/>
+              <circle cx="113" cy="73"  r="10"/>
+              <circle cx="113" cy="127" r="10"/>
+              <circle cx="113" cy="180" r="10"/>
+              <circle cx="207" cy="40"  r="10"/>
+              <circle cx="207" cy="100" r="10"/>
+              <circle cx="207" cy="160" r="10"/>
+              <circle cx="300" cy="40"  r="10"/>
+              <circle cx="300" cy="100" r="10"/>
+              <circle cx="300" cy="160" r="10"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4e. TOOLS · FINAL 3 STATIC — slide 8. Frozen end-state of slide 7
+       after all 17 animation steps complete. Same .tf3-slide class so the
+       data-tf3-step="17" CSS rules render the final visual state, but the
+       JS only ever targets the FIRST .tf3-slide (slide 7) via querySelector,
+       so this slide is never reset and never advances internally. Clicking
+       on this slide falls through to the next slide in the deck. -->
+  <section class="slide tf3-slide pkmn-slide" data-label="Tools · final 2" data-tools-step="20" data-tools-content="stock" data-tf2-step="6" data-tf3-step="17">
+    <div class="chrome top"><span><span class="dot"></span>Chapter 01 · Foundations</span><span>08 / 17</span></div>
+    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>基本のチャット</div>
+    <h2 class="title" style="font-weight: 600; margin-top: 24px; margin-bottom: 37px;">Tools</h2>
+
+    <div class="cm-diagram" data-cm-step="12" style="display:grid; grid-template-columns: 1fr 1.1fr 1fr; align-items:center; gap: 40px; margin-top: 40px;">
+
+      <!-- CHAT SIDE -->
+      <div class="cm-chat-wrap" style="display:flex; flex-direction:column; align-items:center; gap: 28px;">
+        <div class="cm-label cm-chat-label" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 56px; color: var(--ink); letter-spacing: -0.01em;">Chat</div>
+        <div class="cm-chat-box" style="width: 380px; height: 500px; background: #3a3a38; border-radius: 28px; padding: 22px 18px; display:flex; flex-direction:column; justify-content: space-between; box-shadow: 6px 6px 0 rgba(0,0,0,0.08); border: 1px solid #2a2a28;">
+          <div style="display:flex; flex-direction:column; gap: 14px;">
+            <div class="cm-bubble cm-bubble-q cm-on" style="align-self: flex-end; background: rgb(117, 117, 117); color: #fff; border-radius: 14px 14px 4px 14px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 85%;"><span class="cm-bubble-old">How are you doing?</span><span class="cm-bubble-new">What is the weather in Tokyo?</span><span class="cm-bubble-stock">What is the stock price of Tesla?</span><span class="tf2-bubble-q-toggle">Turn on the light</span><span class="tf3-bubble-q-temp">Control temperature</span><span class="pkmn-bubble-q">Next move</span></div>
+            <div class="cm-bubble cm-bubble-r cm-on" style="align-self: flex-start; background:#e8e3d5; color:#1b1b1a; border-radius: 14px 14px 14px 4px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 70%;"><span class="cm-bubble-old">I'm doing great, thanks for asking!</span><span class="cm-bubble-new">Tokyo is currently around 19°C and partly cloudy</span><span class="cm-bubble-stock">It's trading around the mid-$370 range today.</span><span class="tf2-bubble-r-toggle">Done</span></div>
+          </div>
+          <div class="cm-input" style="display:flex; align-items:center; gap: 10px; background:#55534f; border-radius: 10px; padding: 12px 14px;">
+            <div style="flex:1; color:#f2ede1; font-size: 24px;">Input</div>
+            <div style="width: 52px; height: 26px; background:#8a8681; border-radius: 4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARROWS -->
+      <div class="cm-arrows" style="display:flex; flex-direction:column; gap: 56px; align-items:stretch; padding: 60px 0;">
+        <div class="cm-arrow cm-arrow-q cm-on" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
+          </div>
+          <div style="display:flex; align-items:center; white-space: nowrap;">
+            <div style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);"><span class="pkmn-q-text-old">Question</span><span class="pkmn-q-text-new">Question / Context</span></div>
+            <div class="cm-tools-add">
+              <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">+</span>
+              <span class="cm-forecast-wrap">
+                <span class="chip"><span class="tf2-chip-old">getForecast()</span><span class="tf2-chip-new">toggleLight()</span><span class="pkmn-chip-1">move()</span></span>
+                <span class="chip cm-tools-stock"><span class="tf2-chip-old">getStockPrice()</span><span class="tf2-chip-new">toggleHeater()</span><span class="tf3-chip-q2">getTemperature()</span><span class="pkmn-chip-2">attack()</span></span>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="cm-arrow cm-arrow-r" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 18px solid var(--ink);"></div>
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="cm-resp-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
+            <span class="tf3-resp-r-chip"><span class="chip">getTemperature()</span></span>
+            <span class="pkmn-resp-r-chip"><span class="chip">attack()</span></span>
+          </div>
+        </div>
+        <div class="cm-arrow cm-arrow-19" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="tf3-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">10°C</div>
+            <div class="pkmn-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">10HP</div>
+          </div>
+        </div>
+        <div class="cm-arrow cm-arrow-r2" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 18px solid var(--ink);"></div>
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="cm-arrow-r2-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
+            <span class="tf2-resp-chip"><span class="chip">toggleLight()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+            <span class="tf3-resp-r2-chip"><span class="chip">toggleHeater()</span></span>
+            <span class="pkmn-resp-r2-chip"><span class="chip">attack()</span></span>
+          </div>
+        </div>
+        <div class="cm-arrow cm-arrow-fail" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="tf3-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">Fail</div>
+            <div class="pkmn-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">0HP</div>
+          </div>
+        </div>
+        <div class="cm-arrow cm-arrow-retry" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 18px solid var(--ink);"></div>
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: center;">
+            <span class="tf3-arrow-retry-chip"><span class="chip">toggleHeater()</span></span>
+            <span class="pkmn-arrow-retry-chip"><span class="chip">move()</span></span>
+          </div>
         </div>
       </div>
 
@@ -2120,6 +3035,12 @@
       resetToolsReveal();
       // Reset the Tools · final slide reveal.
       resetTfReveal();
+      // Reset the Tools · final 2 slide reveal.
+      resetTf2Reveal();
+      // Reset the Tools · final 3 (slide 7) reveal.
+      resetTf3Reveal();
+      // Reset the Pokemon (slide 8) reveal.
+      resetPkmnReveal();
     });
 
     function chatModelSlide() {
@@ -2273,6 +3194,139 @@
       const mcp = s.querySelector('.tf-box-mcp');
       if (mcp) mcp.classList.remove('tf-thinking');
     }
+
+    // ── Tools · final 2 slide (slide 6) — stepped reveal ──
+    // 1: chips swap getForecast/getStockPrice → toggleLight/toggleHeater
+    // 2: response bubble fades; question bubble swaps to "Turn on the light"
+    // 3: LLM thinking pulse
+    // 4: cm-arrow-r reveals "toggleLight() + ON" chip
+    // 5: Chat thinking pulse
+    // 6: response bubble re-appears with "Done"
+    function toolsFinal2Slide() {
+      return stage.querySelector('section.slide[data-label="Tools · final 2"]');
+    }
+    function isToolsFinal2Active() {
+      const s = toolsFinal2Slide();
+      return !!(s && s.hasAttribute('data-deck-active'));
+    }
+    function tf2Advance() {
+      const s = toolsFinal2Slide();
+      if (!s) return false;
+      const step = parseInt(s.getAttribute('data-tf2-step') || '0', 10);
+      if (step >= 6) return false;
+      const next = step + 1;
+      s.setAttribute('data-tf2-step', String(next));
+      if (next === 3) tfPulse(s.querySelector('.cm-model-box'), 'cm-thinking');
+      if (next === 5) tfPulse(s.querySelector('.cm-chat-box'), 'cm-thinking');
+      return true;
+    }
+    function resetTf2Reveal() {
+      const s = toolsFinal2Slide();
+      if (!s) return;
+      s.removeAttribute('data-tf2-step');
+      const llm = s.querySelector('.cm-model-box');
+      if (llm) llm.classList.remove('cm-thinking');
+      const chat = s.querySelector('.cm-chat-box');
+      if (chat) chat.classList.remove('cm-thinking');
+    }
+
+    // ── Tools · final 3 slide (slide 7) — stepped reveal ──
+    //  1: cleared (default on slide entry — set inline + by reset)
+    //  2: question bubble "Control temperature"
+    //  3: question arrow with "+ toggleLight() / getTemperature()"
+    //  4: LLM thinking pulse (cm-model-box)
+    //  5: response arrow with "getTemperature()" chip
+    //  6: chat thinking pulse (cm-chat-box)
+    //  7: cm-arrow-19 with orange/brown "10°C"
+    //  8: LLM thinking pulse again
+    //  9: cm-arrow-r2 reappears with "toggleHeater()" chip
+    // 10: chat thinking pulse
+    // 11: response bubble "Done"
+    // 12: diagram slides up 140px (Done bubble still visible)
+    // 13: Done bubble fades; new "Fail" arrow (Chat→LLM, orange) appears
+    // 14: LLM thinking pulse
+    // 15: retry arrow (LLM→Chat) with "toggleHeater()" chip appears
+    // 16: chat thinking pulse (executing the retry action)
+    // 17: Done bubble re-appears
+    function toolsFinal3Slide() {
+      return stage.querySelector('section.slide.tf3-slide');
+    }
+    function isToolsFinal3Active() {
+      const s = toolsFinal3Slide();
+      return !!(s && s.hasAttribute('data-deck-active'));
+    }
+    function tf3Advance() {
+      const s = toolsFinal3Slide();
+      if (!s) return false;
+      const step = parseInt(s.getAttribute('data-tf3-step') || '0', 10);
+      if (step >= 17) return false;
+      const next = step + 1;
+      s.setAttribute('data-tf3-step', String(next));
+      if (next === 4 || next === 8 || next === 14) {
+        tfPulse(s.querySelector('.cm-model-box'), 'cm-thinking');
+      }
+      if (next === 6 || next === 10 || next === 16) {
+        tfPulse(s.querySelector('.cm-chat-box'), 'cm-thinking');
+      }
+      return true;
+    }
+    function resetTf3Reveal() {
+      const s = toolsFinal3Slide();
+      if (!s) return;
+      // Enter at step 1 (cleared state), not step 0 (inherited tf2-step=6
+      // final state). The user wants the cleanup to happen on slide entry,
+      // not on the first click.
+      s.setAttribute('data-tf3-step', '1');
+      const llm = s.querySelector('.cm-model-box');
+      if (llm) llm.classList.remove('cm-thinking');
+      const chat = s.querySelector('.cm-chat-box');
+      if (chat) chat.classList.remove('cm-thinking');
+    }
+
+    // ── Slide 8 (.pkmn-slide) — Pokemon retry flow ──
+    //  1: cleared (bubbles + arrow text/badges hidden, lines stay)
+    //  2: bubble-q "Next move"
+    //  3: cm-arrow-q "Question / Context + move() / attack()"
+    //  4: LLM thinks (cm-model-box pulse)
+    //  5: cm-arrow-r attack() chip
+    //  6: Chat thinks (cm-chat-box pulse)
+    //  7: cm-arrow-19 "10HP" (orange)
+    //  8: LLM thinks
+    //  9: cm-arrow-r2 attack() chip
+    // 10: Chat thinks
+    // 11: cm-arrow-fail "0HP" → LLM thinks → cm-arrow-retry move() chip
+    //     (cascades inside one click via timed substep)
+    function pokemonSlide() {
+      return stage.querySelector('section.slide.pkmn-slide');
+    }
+    function isPokemonActive() {
+      const s = pokemonSlide();
+      return !!(s && s.hasAttribute('data-deck-active'));
+    }
+    function pkmnAdvance() {
+      const s = pokemonSlide();
+      if (!s) return false;
+      const step = parseInt(s.getAttribute('data-pkmn-step') || '0', 10);
+      if (step >= 13) return false;
+      const next = step + 1;
+      s.setAttribute('data-pkmn-step', String(next));
+      if (next === 4 || next === 8 || next === 12) {
+        tfPulse(s.querySelector('.cm-model-box'), 'cm-thinking');
+      }
+      if (next === 6 || next === 10) {
+        tfPulse(s.querySelector('.cm-chat-box'), 'cm-thinking');
+      }
+      return true;
+    }
+    function resetPkmnReveal() {
+      const s = pokemonSlide();
+      if (!s) return;
+      s.removeAttribute('data-pkmn-step');
+      const llm = s.querySelector('.cm-model-box');
+      if (llm) llm.classList.remove('cm-thinking');
+      const chat = s.querySelector('.cm-chat-box');
+      if (chat) chat.classList.remove('cm-thinking');
+    }
     function expandMorph() {
       const morph = document.querySelector('.llm-morph');
       if (!morph || morph.classList.contains('expanded')) return false;
@@ -2366,6 +3420,9 @@
           }
           if (isToolsFinalActive() && toolsAdvance()) return;
           if (isToolsFinalStaticActive() && tfAdvance()) return;
+          if (isToolsFinal2Active() && tf2Advance()) return;
+          if (isPokemonActive() && pkmnAdvance()) return;
+          if (isToolsFinal3Active() && tf3Advance()) return;
         }
         return origGo(target, reason);
       };
