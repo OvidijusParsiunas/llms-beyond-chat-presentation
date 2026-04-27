@@ -1334,6 +1334,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 12px;
     white-space: nowrap;
     opacity: 0;
     transition: opacity 300ms cubic-bezier(.2,.7,.2,1);
@@ -1458,7 +1459,9 @@
       10: Chat thinks
       11: cm-arrow-fail "0HP" (orange)
       12: LLM thinks
-      13: cm-arrow-retry move() chip */
+      13: cm-arrow-retry move() chip
+      14: fade out previous arrow text/chips (layout reflows to even six-arrow flow)
+      15: fade in "Input" (forward) / "output()" (back) labels */
 
   /* All pkmn variant text/chips hidden by default */
   .pkmn-bubble-q,
@@ -1515,7 +1518,30 @@
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .pkmn-arrow-19-text { display: block; }
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .tf3-arrow-fail-text { display: none; }
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .pkmn-arrow-fail-text { display: block; }
+  section.slide.tf3-slide .tf3-arrow-retry-chip { display: inline-flex; align-items: center; gap: 12px; }
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step] .tf3-arrow-retry-chip { display: none; }
+
+  /* At step 1 the elements above are mid fade-out (parent opacity transitioning
+     1 → 0). Keep the inherited tf3/tf2 content visible during that fade so the
+     new pkmn text doesn't pop in instantly. The swap lands at step 2, when the
+     elements are still opacity:0 (only cm-bubble-q starts fading back in, with
+     new content already in place). Same specificity as the rules above so
+     downstream `.car-show-bubble` / `.rocket-show-bubble` overrides still win. */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .cm-bubble-q .tf3-bubble-q-temp { display: inline; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .cm-bubble-q .pkmn-bubble-q { display: none; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .pkmn-q-text-old { display: inline; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .pkmn-q-text-new { display: none; }
+  /* Scope to chip 1 only — chip 2 (.cm-tools-stock) keeps its own inherited
+     hide rule so "toggleHeater()" doesn't show next to "getTemperature()". */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .cm-tools-add .chip:not(.cm-tools-stock) .tf2-chip-new { display: inline; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .cm-tools-add .tf3-chip-q2 { display: inline; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .cm-tools-add .pkmn-chip-1 { display: none; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .cm-tools-add .pkmn-chip-2 { display: none; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .tf3-arrow-19-text { display: block; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .pkmn-arrow-19-text { display: none; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .tf3-arrow-fail-text { display: block; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .pkmn-arrow-fail-text { display: none; }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .tf3-arrow-retry-chip { display: inline-flex; }
 
   /* Step 2+ : bubble-q reappears with "Next move" */
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="2"] .cm-diagram .cm-bubble-q,
@@ -1617,6 +1643,287 @@
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="13"] .pkmn-arrow-retry-chip {
     display: inline-block;
   }
+
+  /* Steps 14 + 15 : two-stage swap. At step 14 the previous text/badges fade
+     out (layout already restructured to even six-arrow flow); at step 15 the
+     new "Input" / "output()" labels fade in over the same positions. */
+
+  /* Originals: opacity transition so they fade rather than vanish */
+  section.slide.tf3-slide.pkmn-slide .cm-arrow-q .pkmn-q-text-new,
+  section.slide.tf3-slide.pkmn-slide .cm-arrow-q .cm-tools-add,
+  section.slide.tf3-slide.pkmn-slide .pkmn-arrow-19-text,
+  section.slide.tf3-slide.pkmn-slide .pkmn-arrow-fail-text,
+  section.slide.tf3-slide.pkmn-slide .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide.pkmn-slide .cm-arrow-r2 .cm-arrow-r2-text,
+  section.slide.tf3-slide.pkmn-slide .pkmn-arrow-retry-chip {
+    transition: opacity 300ms cubic-bezier(.2,.7,.2,1);
+  }
+
+  /* New labels overlay the existing text container area (absolute, faded in) */
+  section.slide.tf3-slide.pkmn-slide .pkmn-final-input,
+  section.slide.tf3-slide.pkmn-slide .pkmn-final-output {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms cubic-bezier(.2,.7,.2,1);
+  }
+  section.slide.tf3-slide.pkmn-slide .pkmn-final-input {
+    font-family: 'Comfortaa', var(--font-display);
+    font-weight: 500;
+    font-size: 34px;
+    color: var(--ink);
+  }
+  /* cm-arrow-q and cm-arrow-retry text containers don't have position:relative
+     in their inline styles — add it so the absolute overlays anchor correctly. */
+  section.slide.tf3-slide.pkmn-slide .cm-arrow-q > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide .cm-arrow-retry > div:nth-child(2) {
+    position: relative;
+  }
+
+  /* Step 14 + 15 : keep chat bubble + every arrow text container visible */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-diagram .cm-bubble-q,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-diagram .cm-arrow > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-diagram .cm-arrow > div:nth-child(2) {
+    opacity: 1;
+  }
+
+  /* Step 14 + 15 : fade out all original arrow labels/chips (they keep their
+     layout space so the new overlays land in the right spot). */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-arrow-q .pkmn-q-text-new,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-arrow-q .cm-tools-add,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-arrow-19 .pkmn-arrow-19-text,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-arrow-fail .pkmn-arrow-fail-text,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-arrow-r2 .cm-arrow-r2-text,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .pkmn-resp-r-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .pkmn-resp-r2-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .pkmn-arrow-retry-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-arrow-q .pkmn-q-text-new,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-arrow-q .cm-tools-add,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-arrow-19 .pkmn-arrow-19-text,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-arrow-fail .pkmn-arrow-fail-text,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-arrow-r .cm-resp-text,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-arrow-r2 .cm-arrow-r2-text,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .pkmn-resp-r-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .pkmn-resp-r2-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .pkmn-arrow-retry-chip {
+    opacity: 0;
+  }
+
+  /* Step 15 : fade in the new "Input" / "output()" labels */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .pkmn-final-input,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .pkmn-final-output {
+    opacity: 1;
+  }
+
+  /* Even spacing: drop the absolute positioning of cm-arrow-fail / cm-arrow-retry
+     so all six arrows share the same flex gap, and reset the upward translation
+     that was needed for the staged reveal. The min-height on each text container
+     evens out the line-to-line rhythm (chips are slightly taller than text). */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-diagram .cm-arrows,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-diagram .cm-arrows {
+    transform: translateY(0);
+    padding: 0 !important;
+    gap: 16px !important;
+  }
+  /* fail/retry: drop absolute positioning AND the max-height / overflow:hidden
+     constraints from the staged-reveal rules — otherwise their content is
+     clipped because each arrow is taller than the staged-reveal 120px slot. */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-diagram .cm-arrow.cm-arrow-fail,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-diagram .cm-arrow.cm-arrow-retry,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-diagram .cm-arrow.cm-arrow-fail,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-diagram .cm-arrow.cm-arrow-retry {
+    position: static;
+    top: auto;
+    max-height: none;
+    overflow: visible;
+  }
+  /* Keep the retry chip rendered at step 14/15 so it can fade out via opacity
+     (default rule hides it with display:none, which would skip the transition). */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .pkmn-arrow-retry-chip,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .pkmn-arrow-retry-chip {
+    display: inline-block;
+  }
+  /* Uniform text container height: content centers in a fixed slot so each
+     arrow is the same total height regardless of whether the visible label is
+     34px text ("Input") or a 24px chip ("output()"). */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-diagram .cm-arrow > div:nth-child(2),
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-diagram .cm-arrow > div:nth-child(2) {
+    height: 50px;
+    min-height: 50px;
+  }
+  /* Per-arrow margin overrides to align rows. cm-arrow-r inherits a 30px top
+     margin from the tf3 layout that makes its row taller than the rest;
+     cm-arrow-fail needs a small 14px top margin to match. */
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-diagram .cm-arrow.cm-arrow-r,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-diagram .cm-arrow.cm-arrow-r {
+    margin-top: 0;
+  }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-diagram .cm-arrow.cm-arrow-19,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-diagram .cm-arrow.cm-arrow-19 {
+    margin-top: 14px;
+  }
+
+  /* === Slide 9 (.pkmn-slide #2) — Self-driving-car flow ===
+     Slide enters as the frozen six-arrow "Input/output()" state from slide 8.
+     Each click sets data-car-step (1→9) and toggles a corresponding class on
+     the slide so the labels swap to a self-driving-car narrative:
+       1: chat user bubble  "Next move"  → "Drive a car"
+       2: top Input         "Input"      → "Car is stationary"
+       3: LLM thinking pulse
+       4: top output()      "output()"   → accelerate()
+       5: Chat thinking pulse
+       6: middle Input      "Input"      → "Nearing red light"
+       7: middle output()   "output()"   → stop()
+       8: bottom Input      "Input"      → "Green light"
+       9: bottom output()   "output()"   → accelerate() */
+  section.slide.pkmn-slide .car-bubble-q,
+  section.slide.pkmn-slide .car-input-1,
+  section.slide.pkmn-slide .car-input-2,
+  section.slide.pkmn-slide .car-input-3,
+  section.slide.pkmn-slide .car-output-1,
+  section.slide.pkmn-slide .car-output-2,
+  section.slide.pkmn-slide .car-output-3 {
+    display: none;
+  }
+  /* Car overlays sit in the same absolute layer as the pkmn-final-* labels they
+     replace, so when both display:flex they land in the exact same spot. */
+  section.slide.pkmn-slide .car-input-1,
+  section.slide.pkmn-slide .car-input-2,
+  section.slide.pkmn-slide .car-input-3 {
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    pointer-events: none;
+    font-family: 'Comfortaa', var(--font-display);
+    font-weight: 500;
+    font-size: 34px;
+    color: var(--ink);
+  }
+  section.slide.pkmn-slide .car-output-1,
+  section.slide.pkmn-slide .car-output-2,
+  section.slide.pkmn-slide .car-output-3 {
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  /* Per-step toggles — each class is added cumulatively, so previous swaps stay.
+     Selectors include .tf3-slide to outrank the inherited [data-pkmn-step="15"]
+     rules that set opacity:1 / display:inline on the same elements. */
+  section.slide.tf3-slide.pkmn-slide.car-show-bubble .cm-bubble-q .pkmn-bubble-q { display: none; }
+  section.slide.tf3-slide.pkmn-slide.car-show-bubble .cm-bubble-q .car-bubble-q { display: inline; }
+
+  section.slide.tf3-slide.pkmn-slide.car-show-input-1 .cm-arrow-q .pkmn-final-input { opacity: 0; }
+  section.slide.tf3-slide.pkmn-slide.car-show-input-1 .cm-arrow-q .car-input-1 { display: flex; }
+
+  section.slide.tf3-slide.pkmn-slide.car-show-output-1 .cm-arrow-r .pkmn-final-output { opacity: 0; }
+  section.slide.tf3-slide.pkmn-slide.car-show-output-1 .cm-arrow-r .car-output-1 { display: flex; }
+
+  /* Middle pair (visually): cm-arrow-fail / cm-arrow-retry — these sit in the
+     natural flex flow after q/r. cm-arrow-19 / cm-arrow-r2 are absolutely
+     positioned and render below them, so they form the bottom pair. */
+  section.slide.tf3-slide.pkmn-slide.car-show-input-2 .cm-arrow-fail .pkmn-final-input { opacity: 0; }
+  section.slide.tf3-slide.pkmn-slide.car-show-input-2 .cm-arrow-fail .car-input-2 { display: flex; }
+
+  section.slide.tf3-slide.pkmn-slide.car-show-output-2 .cm-arrow-retry .pkmn-final-output { opacity: 0; }
+  section.slide.tf3-slide.pkmn-slide.car-show-output-2 .cm-arrow-retry .car-output-2 { display: flex; }
+
+  section.slide.tf3-slide.pkmn-slide.car-show-input-3 .cm-arrow-19 .pkmn-final-input { opacity: 0; }
+  section.slide.tf3-slide.pkmn-slide.car-show-input-3 .cm-arrow-19 .car-input-3 { display: flex; }
+
+  section.slide.tf3-slide.pkmn-slide.car-show-output-3 .cm-arrow-r2 .pkmn-final-output { opacity: 0; }
+  section.slide.tf3-slide.pkmn-slide.car-show-output-3 .cm-arrow-r2 .car-output-3 { display: flex; }
+
+  /* === Slide 9 — rocket-launch flow (clicks 10-17) ===
+       10: bubble "Drive a car" → "Launch a rocket to the moon"; all car arrow
+           labels removed (revert to Input / output()).
+       11: top Input        → "All systems OK"
+       12: top output()     → mainEngineStart()
+       13: middle Input     → "Altitude 50km"
+       14: middle output()  → stageSeparation()
+       15: bottom Input     → "Approach moon"
+       16: bottom output()  → deployLander()
+       17: response bubble re-appears with "Successfully landed" */
+  section.slide.pkmn-slide .rocket-bubble-q,
+  section.slide.pkmn-slide .rocket-bubble-r,
+  section.slide.pkmn-slide .rocket-input-1,
+  section.slide.pkmn-slide .rocket-input-2,
+  section.slide.pkmn-slide .rocket-input-3,
+  section.slide.pkmn-slide .rocket-output-1,
+  section.slide.pkmn-slide .rocket-output-2,
+  section.slide.pkmn-slide .rocket-output-3 {
+    display: none;
+  }
+  section.slide.pkmn-slide .rocket-input-1,
+  section.slide.pkmn-slide .rocket-input-2,
+  section.slide.pkmn-slide .rocket-input-3 {
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    pointer-events: none;
+    font-family: 'Comfortaa', var(--font-display);
+    font-weight: 500;
+    font-size: 34px;
+    color: var(--ink);
+  }
+  section.slide.pkmn-slide .rocket-output-1,
+  section.slide.pkmn-slide .rocket-output-2,
+  section.slide.pkmn-slide .rocket-output-3 {
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* Step 10 — bubble swap. .car-show-bubble stays on the section to keep the
+     "Next move" pkmn variant hidden; .rocket-show-bubble layers on top to
+     hide car-bubble-q and show rocket-bubble-q. The car-show-input/output
+     classes get removed in JS so pkmn-final-* fades back to "Input"/"output()". */
+  section.slide.tf3-slide.pkmn-slide.rocket-show-bubble .cm-bubble-q .car-bubble-q { display: none; }
+  section.slide.tf3-slide.pkmn-slide.rocket-show-bubble .cm-bubble-q .rocket-bubble-q { display: inline; }
+  /* Wider max-width while the rocket bubble is shown so "Launch a rocket to
+     the moon" wraps to two lines cleanly instead of clipping. !important is
+     needed because the bubble's max-width is set via an inline style. */
+  section.slide.tf3-slide.pkmn-slide.rocket-show-bubble .cm-bubble-q { max-width: 82% !important; }
+
+  /* Steps 11-16 — progressive label swaps (same arrow targets as the car flow). */
+  section.slide.tf3-slide.pkmn-slide.rocket-show-input-1 .cm-arrow-q .pkmn-final-input { opacity: 0; }
+  section.slide.tf3-slide.pkmn-slide.rocket-show-input-1 .cm-arrow-q .rocket-input-1 { display: flex; }
+
+  section.slide.tf3-slide.pkmn-slide.rocket-show-output-1 .cm-arrow-r .pkmn-final-output { opacity: 0; }
+  section.slide.tf3-slide.pkmn-slide.rocket-show-output-1 .cm-arrow-r .rocket-output-1 { display: flex; }
+
+  section.slide.tf3-slide.pkmn-slide.rocket-show-input-2 .cm-arrow-fail .pkmn-final-input { opacity: 0; }
+  section.slide.tf3-slide.pkmn-slide.rocket-show-input-2 .cm-arrow-fail .rocket-input-2 { display: flex; }
+
+  section.slide.tf3-slide.pkmn-slide.rocket-show-output-2 .cm-arrow-retry .pkmn-final-output { opacity: 0; }
+  section.slide.tf3-slide.pkmn-slide.rocket-show-output-2 .cm-arrow-retry .rocket-output-2 { display: flex; }
+
+  section.slide.tf3-slide.pkmn-slide.rocket-show-input-3 .cm-arrow-19 .pkmn-final-input { opacity: 0; }
+  section.slide.tf3-slide.pkmn-slide.rocket-show-input-3 .cm-arrow-19 .rocket-input-3 { display: flex; }
+
+  section.slide.tf3-slide.pkmn-slide.rocket-show-output-3 .cm-arrow-r2 .pkmn-final-output { opacity: 0; }
+  section.slide.tf3-slide.pkmn-slide.rocket-show-output-3 .cm-arrow-r2 .rocket-output-3 { display: flex; }
+
+  /* Step 17 — response bubble fades back in with "Successfully landed". */
+  section.slide.tf3-slide.pkmn-slide.rocket-show-response .cm-diagram .cm-bubble-r { opacity: 1; }
+  section.slide.tf3-slide.pkmn-slide.rocket-show-response .cm-bubble-r .tf2-bubble-r-toggle { display: none; }
+  section.slide.tf3-slide.pkmn-slide.rocket-show-response .cm-bubble-r .rocket-bubble-r { display: inline; }
 </style>
 </head>
 <body>
@@ -2339,7 +2646,7 @@
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="cm-arrow-r2-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
             <span class="tf2-resp-chip"><span class="chip">toggleLight()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
-            <span class="tf3-resp-r2-chip"><span class="chip">toggleHeater()</span></span>
+            <span class="tf3-resp-r2-chip"><span class="chip">toggleHeater()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
           </div>
         </div>
         <!-- Step 13+: Chat → LLM "Fail" arrow (orange/brown text, same direction
@@ -2359,8 +2666,9 @@
             <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 18px solid var(--ink);"></div>
             <div style="flex:1; height: 3px; background: var(--ink);"></div>
           </div>
-          <div style="display: flex; align-items: center; justify-content: center;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
             <span class="chip">toggleHeater()</span>
+            <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span>
           </div>
         </div>
       </div>
@@ -2475,6 +2783,7 @@
                 <span class="chip cm-tools-stock"><span class="tf2-chip-old">getStockPrice()</span><span class="tf2-chip-new">toggleHeater()</span><span class="tf3-chip-q2">getTemperature()</span><span class="pkmn-chip-2">attack()</span></span>
               </span>
             </div>
+            <div class="pkmn-final-input">Input</div>
           </div>
         </div>
         <div class="cm-arrow cm-arrow-r" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
@@ -2486,6 +2795,7 @@
             <div class="cm-resp-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
             <span class="tf3-resp-r-chip"><span class="chip">getTemperature()</span></span>
             <span class="pkmn-resp-r-chip"><span class="chip">attack()</span></span>
+            <span class="pkmn-final-output"><span class="chip">output()</span></span>
           </div>
         </div>
         <div class="cm-arrow cm-arrow-19" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
@@ -2496,6 +2806,7 @@
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="tf3-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">10°C</div>
             <div class="pkmn-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">10HP</div>
+            <div class="pkmn-final-input">Input</div>
           </div>
         </div>
         <div class="cm-arrow cm-arrow-r2" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
@@ -2506,8 +2817,9 @@
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="cm-arrow-r2-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
             <span class="tf2-resp-chip"><span class="chip">toggleLight()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
-            <span class="tf3-resp-r2-chip"><span class="chip">toggleHeater()</span></span>
+            <span class="tf3-resp-r2-chip"><span class="chip">toggleHeater()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
             <span class="pkmn-resp-r2-chip"><span class="chip">attack()</span></span>
+            <span class="pkmn-final-output"><span class="chip">output()</span></span>
           </div>
         </div>
         <div class="cm-arrow cm-arrow-fail" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
@@ -2518,6 +2830,7 @@
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="tf3-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">Fail</div>
             <div class="pkmn-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">0HP</div>
+            <div class="pkmn-final-input">Input</div>
           </div>
         </div>
         <div class="cm-arrow cm-arrow-retry" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
@@ -2526,8 +2839,193 @@
             <div style="flex:1; height: 3px; background: var(--ink);"></div>
           </div>
           <div style="display: flex; align-items: center; justify-content: center;">
-            <span class="tf3-arrow-retry-chip"><span class="chip">toggleHeater()</span></span>
+            <span class="tf3-arrow-retry-chip"><span class="chip">toggleHeater()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
             <span class="pkmn-arrow-retry-chip"><span class="chip">move()</span></span>
+            <span class="pkmn-final-output"><span class="chip">output()</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODEL SIDE -->
+      <div class="cm-model-wrap" style="display:flex; flex-direction:column; align-items:center; gap: 28px;">
+        <div class="cm-label cm-model-label" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 56px; color: var(--ink); letter-spacing: -0.01em;">LLM</div>
+        <div class="cm-model-box" style="width: 380px; height: 380px; background: #3a3a38; border-radius: 28px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 24px; box-sizing: border-box; box-shadow: 6px 6px 0 rgba(0,0,0,0.08); border: 1px solid #2a2a28; color:#f2ede1; position: relative;">
+          <svg class="cm-viz cm-viz-nn" viewBox="0 0 320 200" width="85%" height="70%" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style="display:block;">
+            <g stroke="#e8e3d5" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.85">
+              <line x1="20"  y1="20"  x2="113" y2="20"/>
+              <line x1="20"  y1="20"  x2="113" y2="73"/>
+              <line x1="20"  y1="20"  x2="113" y2="127"/>
+              <line x1="20"  y1="20"  x2="113" y2="180"/>
+              <line x1="20"  y1="73"  x2="113" y2="20"/>
+              <line x1="20"  y1="73"  x2="113" y2="73"/>
+              <line x1="20"  y1="73"  x2="113" y2="127"/>
+              <line x1="20"  y1="73"  x2="113" y2="180"/>
+              <line x1="20"  y1="127" x2="113" y2="20"/>
+              <line x1="20"  y1="127" x2="113" y2="73"/>
+              <line x1="20"  y1="127" x2="113" y2="127"/>
+              <line x1="20"  y1="127" x2="113" y2="180"/>
+              <line x1="20"  y1="180" x2="113" y2="20"/>
+              <line x1="20"  y1="180" x2="113" y2="73"/>
+              <line x1="20"  y1="180" x2="113" y2="127"/>
+              <line x1="20"  y1="180" x2="113" y2="180"/>
+              <line x1="113" y1="20"  x2="207" y2="40"/>
+              <line x1="113" y1="20"  x2="207" y2="100"/>
+              <line x1="113" y1="20"  x2="207" y2="160"/>
+              <line x1="113" y1="73"  x2="207" y2="40"/>
+              <line x1="113" y1="73"  x2="207" y2="100"/>
+              <line x1="113" y1="73"  x2="207" y2="160"/>
+              <line x1="113" y1="127" x2="207" y2="40"/>
+              <line x1="113" y1="127" x2="207" y2="100"/>
+              <line x1="113" y1="127" x2="207" y2="160"/>
+              <line x1="113" y1="180" x2="207" y2="40"/>
+              <line x1="113" y1="180" x2="207" y2="100"/>
+              <line x1="113" y1="180" x2="207" y2="160"/>
+              <line x1="207" y1="40"  x2="300" y2="40"/>
+              <line x1="207" y1="40"  x2="300" y2="100"/>
+              <line x1="207" y1="40"  x2="300" y2="160"/>
+              <line x1="207" y1="100" x2="300" y2="40"/>
+              <line x1="207" y1="100" x2="300" y2="100"/>
+              <line x1="207" y1="100" x2="300" y2="160"/>
+              <line x1="207" y1="160" x2="300" y2="40"/>
+              <line x1="207" y1="160" x2="300" y2="100"/>
+              <line x1="207" y1="160" x2="300" y2="160"/>
+            </g>
+            <g fill="#e8e3d5">
+              <circle cx="20"  cy="20"  r="10"/>
+              <circle cx="20"  cy="73"  r="10"/>
+              <circle cx="20"  cy="127" r="10"/>
+              <circle cx="20"  cy="180" r="10"/>
+              <circle cx="113" cy="20"  r="10"/>
+              <circle cx="113" cy="73"  r="10"/>
+              <circle cx="113" cy="127" r="10"/>
+              <circle cx="113" cy="180" r="10"/>
+              <circle cx="207" cy="40"  r="10"/>
+              <circle cx="207" cy="100" r="10"/>
+              <circle cx="207" cy="160" r="10"/>
+              <circle cx="300" cy="40"  r="10"/>
+              <circle cx="300" cy="100" r="10"/>
+              <circle cx="300" cy="160" r="10"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4f. TOOLS · FINAL 4 STATIC — slide 9. Frozen end-state of slide 8 after
+       all pkmn animations complete (data-pkmn-step="15" pre-set). The JS
+       targets the FIRST .pkmn-slide via querySelector, so this slide is never
+       reset and never advances internally; clicking falls through to the next
+       slide in the deck. -->
+  <section class="slide tf3-slide pkmn-slide" data-label="Tools · final 2" data-tools-step="20" data-tools-content="stock" data-tf2-step="6" data-tf3-step="17" data-pkmn-step="15">
+    <div class="chrome top"><span><span class="dot"></span>Chapter 01 · Foundations</span><span>09 / 17</span></div>
+    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>基本のチャット</div>
+    <h2 class="title" style="font-weight: 600; margin-top: 24px; margin-bottom: 37px;">Tools</h2>
+
+    <div class="cm-diagram" data-cm-step="12" style="display:grid; grid-template-columns: 1fr 1.1fr 1fr; align-items:center; gap: 40px; margin-top: 40px;">
+
+      <!-- CHAT SIDE -->
+      <div class="cm-chat-wrap" style="display:flex; flex-direction:column; align-items:center; gap: 28px;">
+        <div class="cm-label cm-chat-label" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 56px; color: var(--ink); letter-spacing: -0.01em;">Chat</div>
+        <div class="cm-chat-box" style="width: 380px; height: 500px; background: #3a3a38; border-radius: 28px; padding: 22px 18px; display:flex; flex-direction:column; justify-content: space-between; box-shadow: 6px 6px 0 rgba(0,0,0,0.08); border: 1px solid #2a2a28;">
+          <div style="display:flex; flex-direction:column; gap: 14px;">
+            <div class="cm-bubble cm-bubble-q cm-on" style="align-self: flex-end; background: rgb(117, 117, 117); color: #fff; border-radius: 14px 14px 4px 14px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 85%;"><span class="cm-bubble-old">How are you doing?</span><span class="cm-bubble-new">What is the weather in Tokyo?</span><span class="cm-bubble-stock">What is the stock price of Tesla?</span><span class="tf2-bubble-q-toggle">Turn on the light</span><span class="tf3-bubble-q-temp">Control temperature</span><span class="pkmn-bubble-q">Next move</span><span class="car-bubble-q">Drive a car</span><span class="rocket-bubble-q">Launch a rocket to the moon</span></div>
+            <div class="cm-bubble cm-bubble-r cm-on" style="align-self: flex-start; background:#e8e3d5; color:#1b1b1a; border-radius: 14px 14px 14px 4px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 70%;"><span class="cm-bubble-old">I'm doing great, thanks for asking!</span><span class="cm-bubble-new">Tokyo is currently around 19°C and partly cloudy</span><span class="cm-bubble-stock">It's trading around the mid-$370 range today.</span><span class="tf2-bubble-r-toggle">Done</span><span class="rocket-bubble-r">Successfully landed</span></div>
+          </div>
+          <div class="cm-input" style="display:flex; align-items:center; gap: 10px; background:#55534f; border-radius: 10px; padding: 12px 14px;">
+            <div style="flex:1; color:#f2ede1; font-size: 24px;">Input</div>
+            <div style="width: 52px; height: 26px; background:#8a8681; border-radius: 4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARROWS -->
+      <div class="cm-arrows" style="display:flex; flex-direction:column; gap: 56px; align-items:stretch; padding: 60px 0;">
+        <div class="cm-arrow cm-arrow-q cm-on" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
+          </div>
+          <div style="display:flex; align-items:center; white-space: nowrap;">
+            <div style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);"><span class="pkmn-q-text-old">Prompt</span><span class="pkmn-q-text-new">Prompt / Context</span></div>
+            <div class="cm-tools-add">
+              <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">+</span>
+              <span class="cm-forecast-wrap">
+                <span class="chip"><span class="tf2-chip-old">getForecast()</span><span class="tf2-chip-new">toggleLight()</span><span class="pkmn-chip-1">move()</span></span>
+                <span class="chip cm-tools-stock"><span class="tf2-chip-old">getStockPrice()</span><span class="tf2-chip-new">toggleHeater()</span><span class="tf3-chip-q2">getTemperature()</span><span class="pkmn-chip-2">attack()</span></span>
+              </span>
+            </div>
+            <div class="pkmn-final-input">Input</div>
+            <div class="car-input-1">Car is stationary</div>
+            <div class="rocket-input-1">All systems OK</div>
+          </div>
+        </div>
+        <div class="cm-arrow cm-arrow-r" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 18px solid var(--ink);"></div>
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="cm-resp-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
+            <span class="tf3-resp-r-chip"><span class="chip">getTemperature()</span></span>
+            <span class="pkmn-resp-r-chip"><span class="chip">attack()</span></span>
+            <span class="pkmn-final-output"><span class="chip">output()</span></span>
+            <span class="car-output-1"><span class="chip">accelerate()</span></span>
+            <span class="rocket-output-1"><span class="chip">mainEngineStart()</span></span>
+          </div>
+        </div>
+        <div class="cm-arrow cm-arrow-19" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="tf3-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">10°C</div>
+            <div class="pkmn-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">10HP</div>
+            <div class="pkmn-final-input">Input</div>
+            <div class="car-input-3">Green light</div>
+            <div class="rocket-input-3">Approaching moon</div>
+          </div>
+        </div>
+        <div class="cm-arrow cm-arrow-r2" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 18px solid var(--ink);"></div>
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="cm-arrow-r2-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
+            <span class="tf2-resp-chip"><span class="chip">toggleLight()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+            <span class="tf3-resp-r2-chip"><span class="chip">toggleHeater()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+            <span class="pkmn-resp-r2-chip"><span class="chip">attack()</span></span>
+            <span class="pkmn-final-output"><span class="chip">output()</span></span>
+            <span class="car-output-3"><span class="chip">accelerate()</span></span>
+            <span class="rocket-output-3"><span class="chip">deployLander()</span></span>
+          </div>
+        </div>
+        <div class="cm-arrow cm-arrow-fail" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
+          </div>
+          <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="tf3-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">Fail</div>
+            <div class="pkmn-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">0HP</div>
+            <div class="pkmn-final-input">Input</div>
+            <div class="car-input-2">Nearing red light</div>
+            <div class="rocket-input-2">Altitude 50km</div>
+          </div>
+        </div>
+        <div class="cm-arrow cm-arrow-retry" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+          <div style="display:flex; align-items:center; width: 100%;">
+            <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 18px solid var(--ink);"></div>
+            <div style="flex:1; height: 3px; background: var(--ink);"></div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: center;">
+            <span class="tf3-arrow-retry-chip"><span class="chip">toggleHeater()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+            <span class="pkmn-arrow-retry-chip"><span class="chip">move()</span></span>
+            <span class="pkmn-final-output"><span class="chip">output()</span></span>
+            <span class="car-output-2"><span class="chip">stop()</span></span>
+            <span class="rocket-output-2"><span class="chip">stageSeparation()</span></span>
           </div>
         </div>
       </div>
@@ -2996,6 +3494,8 @@
       resetTf3Reveal();
       // Reset the Pokemon (slide 8) reveal.
       resetPkmnReveal();
+      // Reset the car (slide 9) reveal.
+      resetCarReveal();
     });
 
     function chatModelSlide() {
@@ -3251,6 +3751,8 @@
     // 10: Chat thinks
     // 11: cm-arrow-fail "0HP" → LLM thinks → cm-arrow-retry move() chip
     //     (cascades inside one click via timed substep)
+    // 14: fade out the previous text/chips (layout settles to even six-arrow flow)
+    // 15: fade in the new "Input" / "output()" labels
     function pokemonSlide() {
       return stage.querySelector('section.slide.pkmn-slide');
     }
@@ -3262,7 +3764,7 @@
       const s = pokemonSlide();
       if (!s) return false;
       const step = parseInt(s.getAttribute('data-pkmn-step') || '0', 10);
-      if (step >= 13) return false;
+      if (step >= 15) return false;
       const next = step + 1;
       s.setAttribute('data-pkmn-step', String(next));
       if (next === 4 || next === 8 || next === 12) {
@@ -3277,6 +3779,86 @@
       const s = pokemonSlide();
       if (!s) return;
       s.removeAttribute('data-pkmn-step');
+      const llm = s.querySelector('.cm-model-box');
+      if (llm) llm.classList.remove('cm-thinking');
+      const chat = s.querySelector('.cm-chat-box');
+      if (chat) chat.classList.remove('cm-thinking');
+    }
+
+    // ── Slide 9 (.pkmn-slide #2) — car flow then rocket-launch flow ──
+    //  1: chat user bubble  → "Drive a car"
+    //  2: top Input         → "Car is stationary"
+    //  3: LLM thinks
+    //  4: top output()      → accelerate()
+    //  5: Chat thinks
+    //  6: middle Input      → "Nearing red light"
+    //  7: middle output()   → stop()
+    //  8: bottom Input      → "Green light"
+    //  9: bottom output()   → accelerate()
+    // 10: bubble → "Launch a rocket to the moon"; arrow labels reset to Input/output()
+    // 11: top Input         → "All systems OK"
+    // 12: top output()      → mainEngineStart()
+    // 13: middle Input      → "Altitude 50km"
+    // 14: middle output()   → stageSeparation()
+    // 15: bottom Input      → "Approach moon"
+    // 16: bottom output()   → deployLander()
+    // 17: response bubble re-appears with "Successfully landed"
+    function carSlide() {
+      const slides = stage.querySelectorAll('section.slide.pkmn-slide');
+      return slides[1] || null;
+    }
+    function isCarActive() {
+      const s = carSlide();
+      return !!(s && s.hasAttribute('data-deck-active'));
+    }
+    function carAdvance() {
+      const s = carSlide();
+      if (!s) return false;
+      const step = parseInt(s.getAttribute('data-car-step') || '0', 10);
+      if (step >= 17) return false;
+      const next = step + 1;
+      s.setAttribute('data-car-step', String(next));
+      if (next === 1) s.classList.add('car-show-bubble');
+      if (next === 2) s.classList.add('car-show-input-1');
+      if (next === 3) tfPulse(s.querySelector('.cm-model-box'), 'cm-thinking');
+      if (next === 4) s.classList.add('car-show-output-1');
+      if (next === 5) tfPulse(s.querySelector('.cm-chat-box'), 'cm-thinking');
+      if (next === 6) s.classList.add('car-show-input-2');
+      if (next === 7) s.classList.add('car-show-output-2');
+      if (next === 8) s.classList.add('car-show-input-3');
+      if (next === 9) s.classList.add('car-show-output-3');
+      if (next === 10) {
+        // Bubble swap to "Launch a rocket to the moon" + revert all arrow
+        // labels to Input / output(). car-show-bubble stays so pkmn-bubble-q
+        // ("Next move") remains hidden under the new rocket bubble.
+        s.classList.remove(
+          'car-show-input-1', 'car-show-input-2', 'car-show-input-3',
+          'car-show-output-1', 'car-show-output-2', 'car-show-output-3'
+        );
+        s.classList.add('rocket-show-bubble');
+      }
+      if (next === 11) s.classList.add('rocket-show-input-1');
+      if (next === 12) s.classList.add('rocket-show-output-1');
+      if (next === 13) s.classList.add('rocket-show-input-2');
+      if (next === 14) s.classList.add('rocket-show-output-2');
+      if (next === 15) s.classList.add('rocket-show-input-3');
+      if (next === 16) s.classList.add('rocket-show-output-3');
+      if (next === 17) s.classList.add('rocket-show-response');
+      return true;
+    }
+    function resetCarReveal() {
+      const s = carSlide();
+      if (!s) return;
+      s.removeAttribute('data-car-step');
+      s.classList.remove(
+        'car-show-bubble',
+        'car-show-input-1', 'car-show-input-2', 'car-show-input-3',
+        'car-show-output-1', 'car-show-output-2', 'car-show-output-3',
+        'rocket-show-bubble',
+        'rocket-show-input-1', 'rocket-show-input-2', 'rocket-show-input-3',
+        'rocket-show-output-1', 'rocket-show-output-2', 'rocket-show-output-3',
+        'rocket-show-response'
+      );
       const llm = s.querySelector('.cm-model-box');
       if (llm) llm.classList.remove('cm-thinking');
       const chat = s.querySelector('.cm-chat-box');
@@ -3378,6 +3960,7 @@
           if (isToolsFinal2Active() && tf2Advance()) return;
           if (isPokemonActive() && pkmnAdvance()) return;
           if (isToolsFinal3Active() && tf3Advance()) return;
+          if (isCarActive() && carAdvance()) return;
         }
         return origGo(target, reason);
       };
