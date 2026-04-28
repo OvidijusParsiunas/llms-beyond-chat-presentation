@@ -1924,6 +1924,35 @@
   section.slide.tf3-slide.pkmn-slide.rocket-show-response .cm-diagram .cm-bubble-r { opacity: 1; }
   section.slide.tf3-slide.pkmn-slide.rocket-show-response .cm-bubble-r .tf2-bubble-r-toggle { display: none; }
   section.slide.tf3-slide.pkmn-slide.rocket-show-response .cm-bubble-r .rocket-bubble-r { display: inline; }
+
+  /* Tips slide — stepped reveal. Cards hidden by default; each click reveals
+     one more card in order. */
+  section.slide[data-label="Tips"] .tips-grid > div {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 400ms ease, transform 400ms ease;
+  }
+  section.slide[data-label="Tips"][data-tips-step="1"] .tips-grid > div:nth-child(-n+1),
+  section.slide[data-label="Tips"][data-tips-step="2"] .tips-grid > div:nth-child(-n+2),
+  section.slide[data-label="Tips"][data-tips-step="3"] .tips-grid > div:nth-child(-n+3),
+  section.slide[data-label="Tips"][data-tips-step="4"] .tips-grid > div {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Future slide — same stepped reveal as Tips. */
+  section.slide[data-label="Future"] .future-grid > div {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 400ms ease, transform 400ms ease;
+  }
+  section.slide[data-label="Future"][data-future-step="1"] .future-grid > div:nth-child(-n+1),
+  section.slide[data-label="Future"][data-future-step="2"] .future-grid > div:nth-child(-n+2),
+  section.slide[data-label="Future"][data-future-step="3"] .future-grid > div:nth-child(-n+3),
+  section.slide[data-label="Future"][data-future-step="4"] .future-grid > div {
+    opacity: 1;
+    transform: none;
+  }
 </style>
 </head>
 <body>
@@ -3096,6 +3125,64 @@
     </div>
   </section>
 
+  <!-- 13. TIPS -->
+  <section class="slide" data-label="Tips">
+    <div class="chrome top"><span><span class="dot"></span>Chapter 05 · Practice</span><span>13 / 16</span></div>
+    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>知っておくべき4つのこと</div>
+    <h2 class="title">Four things worth knowing.</h2>
+    <div class="tips-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 74px;">
+      <div class="col" style="gap: 12px; padding: 32px 36px; background: #fff; border: 1.5px solid var(--ink); border-radius: 20px; box-shadow: 4px 4px 0 var(--ink);">
+        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: var(--ink-3); letter-spacing: 0.08em;">01 · Scope</div>
+        <div style="font-family: var(--font-display); font-weight: 600; font-size: 38px; line-height: 1.05; letter-spacing: -0.02em;">Many calls &gt; one long chat.</div>
+        <div class="body" style="font-size: 24px; margin-top: 6px;">長い会話を続けるより、毎回新しい呼び出しを。</div>
+      </div>
+      <div class="col" style="gap: 12px; padding: 32px 36px; background: #fff; border: 1.5px solid var(--ink); border-radius: 20px; box-shadow: 4px 4px 0 var(--ink);">
+        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: var(--ink-3); letter-spacing: 0.08em;">02 · Right-size</div>
+        <div style="font-family: var(--font-display); font-weight: 600; font-size: 38px; line-height: 1.05; letter-spacing: -0.02em;">Simple models for simple tasks.</div>
+        <div class="body" style="font-size: 24px; margin-top: 6px;">簡単なタスクには小さなモデルで十分。安くて速い。</div>
+      </div>
+      <div class="col" style="gap: 12px; padding: 32px 36px; background: #fff; border: 1.5px solid var(--ink); border-radius: 20px; box-shadow: 4px 4px 0 var(--ink);">
+        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: var(--ink-3); letter-spacing: 0.08em;">03 · Mistakes</div>
+        <div style="font-family: var(--font-display); font-weight: 600; font-size: 38px; line-height: 1.05; letter-spacing: -0.02em;">AI can make mistakes.</div>
+        <div class="body" style="font-size: 24px; margin-top: 6px;">出力を信頼しすぎず、必ず検証する。</div>
+      </div>
+      <div class="col" style="gap: 12px; padding: 32px 36px; background: var(--ink); color: #f2ede1; border-radius: 20px; box-shadow: 4px 4px 0 #000;">
+        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: rgba(255,255,255,0.5); letter-spacing: 0.08em;">04 · Failure</div>
+        <div style="font-family: var(--font-display); font-weight: 600; font-size: 38px; line-height: 1.05; letter-spacing: -0.02em; color: #fff;">APIs go down. Plan for it.</div>
+        <div class="body" style="font-size: 24px; margin-top: 6px; color: rgba(246,241,227,0.78);">APIは落ちることがある。リトライやフォールバックを忘れずに。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14. FUTURE -->
+  <section class="slide dark" data-label="Future">
+    <div class="chrome top" style="color: rgba(255,255,255,0.55);"><span><span class="dot" style="background:#f2ede1;"></span>Chapter 06 · Forward</span><span>14 / 16</span></div>
+    <div class="eyebrow" style="margin-top: 40px; color: rgba(255,255,255,0.6);"><span class="sym" style="color:#7fc38f;">▍</span>次に来るもの</div>
+    <h2 class="title" style="color: #f6f1e3;">What's coming <em style="color:#7fc38f; font-style: italic;">next.</em></h2>
+    <div class="future-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 74px;">
+      <div style="padding: 32px 36px; background: rgba(127,195,143,0.08); border: 1px solid rgba(127,195,143,0.35); border-radius: 20px;">
+        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: #7fc38f; letter-spacing: 0.1em;">{ } · New idea</div>
+        <div style="font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.05; letter-spacing: -0.02em; margin-top: 10px; color: #fff;">Programmatic tools</div>
+        <div class="body" style="color: rgba(246,241,227,0.78); font-size: 24px; margin-top: 12px;">モデルが必要なツールをその場でコードとして生成する。</div>
+      </div>
+      <div style="padding: 32px 36px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.14); border-radius: 20px;">
+        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: #7fc38f; letter-spacing: 0.1em;">⇄ · Transport</div>
+        <div style="font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.05; letter-spacing: -0.02em; margin-top: 10px; color: #fff;">WebSockets</div>
+        <div class="body" style="color: rgba(246,241,227,0.78); font-size: 24px; margin-top: 12px;">双方向ストリームでリクエスト/レスポンスを置き換え、低遅延を実現。</div>
+      </div>
+      <div style="padding: 32px 36px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.14); border-radius: 20px;">
+        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: #7fc38f; letter-spacing: 0.1em;">↑ · Trajectory</div>
+        <div style="font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.05; letter-spacing: -0.02em; margin-top: 10px; color: #fff;">Smarter · Faster · Cheaper</div>
+        <div class="body" style="color: rgba(246,241,227,0.78); font-size: 24px; margin-top: 12px;">モデルは賢く、速く、安くなり続ける。</div>
+      </div>
+      <div style="padding: 32px 36px; background: rgba(127,195,143,0.08); border: 1px solid rgba(127,195,143,0.35); border-radius: 20px;">
+        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: #7fc38f; letter-spacing: 0.1em;">⌂ · Closer</div>
+        <div style="font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.05; letter-spacing: -0.02em; margin-top: 10px; color: #fff;">Edge computing</div>
+        <div class="body" style="color: rgba(246,241,227,0.78); font-size: 24px; margin-top: 12px;">デバイス上で動く小さなモデル。サーバーへの往復が不要に。</div>
+      </div>
+    </div>
+  </section>
+
   <!-- 5. INTRODUCING TOOLS -->
   <section class="slide" data-label="Tools intro">
     <div class="chrome top"><span><span class="dot"></span>Chapter 02 · Tools</span><span>04 / 16</span></div>
@@ -3362,43 +3449,6 @@
     </div>
   </section>
 
-  <!-- 13. TIPS -->
-  <section class="slide" data-label="Tips">
-    <div class="chrome top"><span><span class="dot"></span>Chapter 05 · Practice</span><span>13 / 16</span></div>
-    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>Tips from building this stuff</div>
-    <h2 class="title">Four things worth knowing.</h2>
-    <ol class="big" style="margin-top: 20px;">
-      <li><div><p class="h">Models are not deterministic</p><p class="p">Use hard-coded rules wherever correctness actually matters. Let the model decide the fuzzy parts, not the critical ones.</p></div></li>
-      <li><div><p class="h">Specialise your agents</p><p class="p">Many small agents, each with a narrow tool menu, outperform one giant do-everything prompt — and cost less per call.</p></div></li>
-      <li><div><p class="h">Fan out with parallel tools</p><p class="p">If calls are independent, ask for them all in one turn. Fewer round-trips, cheaper, faster.</p></div></li>
-      <li><div><p class="h">Assume APIs will fail</p><p class="p">Outages, rate limits, bad JSON. Retry, degrade gracefully, and let the model see the failure so it can try again.</p></div></li>
-    </ol>
-  </section>
-
-  <!-- 14. FUTURE -->
-  <section class="slide dark" data-label="Future">
-    <div class="chrome top" style="color: rgba(255,255,255,0.55);"><span><span class="dot" style="background:#f2ede1;"></span>Chapter 06 · Forward</span><span>14 / 16</span></div>
-    <div class="eyebrow" style="margin-top: 40px; color: rgba(255,255,255,0.6);"><span class="sym" style="color:#7fc38f;">▍</span>Where this goes next</div>
-    <h2 class="title" style="color: #f6f1e3;">Cheaper. Faster. <em style="color:#7fc38f; font-style: italic;">Closer.</em></h2>
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; margin-top: 60px;">
-      <div>
-        <div class="stat" style="color:#7fc38f;">↓</div>
-        <div style="font-family: var(--font-display); font-weight: 600; font-size: 40px; margin-top: 12px; color: #fff;">Cost</div>
-        <div class="body" style="color: rgba(246,241,227,0.7); font-size: 26px; margin-top: 8px;">What feels expensive today will be a rounding error next year. More loops become worth running.</div>
-      </div>
-      <div>
-        <div class="stat" style="color:#7fc38f;">↑</div>
-        <div style="font-family: var(--font-display); font-weight: 600; font-size: 40px; margin-top: 12px; color: #fff;">Capability</div>
-        <div class="body" style="color: rgba(246,241,227,0.7); font-size: 26px; margin-top: 8px;">Models keep getting sharper — borderline tasks today are trivial automations tomorrow.</div>
-      </div>
-      <div>
-        <div class="stat" style="color:#7fc38f;">→</div>
-        <div style="font-family: var(--font-display); font-weight: 600; font-size: 40px; margin-top: 12px; color: #fff;">Edge</div>
-        <div class="body" style="color: rgba(246,241,227,0.7); font-size: 26px; margin-top: 8px;">Running on-device opens the latency-sensitive cases — robotics, wearables, live audio.</div>
-      </div>
-    </div>
-  </section>
-
   <!-- 15. RECAP -->
   <section class="slide" data-label="Recap">
     <div class="chrome top"><span><span class="dot"></span>Recap</span><span>15 / 16</span></div>
@@ -3496,6 +3546,10 @@
       resetPkmnReveal();
       // Reset the car (slide 9) reveal.
       resetCarReveal();
+      // Reset the Tips slide reveal.
+      resetTipsReveal();
+      // Reset the Future slide reveal.
+      resetFutureReveal();
     });
 
     function chatModelSlide() {
@@ -3942,6 +3996,52 @@
       return false;
     }
 
+    // ── Tips slide — stepped reveal ──
+    // 0: default — all four cards hidden
+    // 1–4: each click reveals one more card in order
+    function tipsSlide() {
+      return stage.querySelector('section.slide[data-label="Tips"]');
+    }
+    function isTipsActive() {
+      const s = tipsSlide();
+      return !!(s && s.hasAttribute('data-deck-active'));
+    }
+    function tipsAdvance() {
+      const s = tipsSlide();
+      if (!s) return false;
+      const step = parseInt(s.getAttribute('data-tips-step') || '0', 10);
+      if (step >= 4) return false;
+      s.setAttribute('data-tips-step', String(step + 1));
+      return true;
+    }
+    function resetTipsReveal() {
+      const s = tipsSlide();
+      if (!s) return;
+      s.removeAttribute('data-tips-step');
+    }
+
+    // ── Future slide — stepped reveal (same shape as Tips) ──
+    function futureSlide() {
+      return stage.querySelector('section.slide[data-label="Future"]');
+    }
+    function isFutureActive() {
+      const s = futureSlide();
+      return !!(s && s.hasAttribute('data-deck-active'));
+    }
+    function futureAdvance() {
+      const s = futureSlide();
+      if (!s) return false;
+      const step = parseInt(s.getAttribute('data-future-step') || '0', 10);
+      if (step >= 4) return false;
+      s.setAttribute('data-future-step', String(step + 1));
+      return true;
+    }
+    function resetFutureReveal() {
+      const s = futureSlide();
+      if (!s) return;
+      s.removeAttribute('data-future-step');
+    }
+
     // Monkey-patch the internal _go to intercept forward navigation on Agenda.
     // This catches keyboard (→/Space/PageDown), tap zones, and overlay next — all routes.
     const origGo = stage._go && stage._go.bind(stage);
@@ -3961,6 +4061,8 @@
           if (isPokemonActive() && pkmnAdvance()) return;
           if (isToolsFinal3Active() && tf3Advance()) return;
           if (isCarActive() && carAdvance()) return;
+          if (isTipsActive() && tipsAdvance()) return;
+          if (isFutureActive() && futureAdvance()) return;
         }
         return origGo(target, reason);
       };
