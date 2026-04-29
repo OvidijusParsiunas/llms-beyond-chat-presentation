@@ -41,7 +41,6 @@
     justify-content: flex-start;
   }
   section.slide.dark { background: #141413; color: #f2ede1; }
-  section.slide.cream { background: #f3eee2; }
 
   /* Chrome at corners — quiet editorial marks */
   .chrome {
@@ -77,13 +76,11 @@
     margin: 0 0 44px 0;
   }
 
-  .lede { font-size: 40px; line-height: 1.3; max-width: 1400px; color: var(--ink-2); }
   .body { font-size: 32px; line-height: 1.4; color: var(--ink-2); }
   .small { font-size: 26px; color: var(--ink-3); }
 
   /* Generic layout helpers */
   .col { display: flex; flex-direction: column; gap: 24px; }
-  .hr { height: 1px; background: var(--rule); }
 
   /* Tool box (like a chip) */
   .chip {
@@ -97,47 +94,6 @@
     border-radius: 999px;
   }
   .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
-  .chip.ghost { background: transparent; color: var(--ink-3); }
-
-  /* A rounded node box used in diagrams */
-  .node {
-    background: var(--card);
-    border: 1.5px solid var(--ink);
-    border-radius: 22px;
-    padding: 28px 36px;
-    box-shadow: 4px 4px 0 var(--ink);
-    font-family: var(--font-display);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-  .node.sm { padding: 18px 24px; font-size: 26px; border-radius: 14px; box-shadow: 3px 3px 0 var(--ink); }
-  .node .sub.big { font-size: 24px !important; }
-  .node.lg { padding: 40px 52px; font-size: 40px; border-radius: 28px; box-shadow: 6px 6px 0 var(--ink); }
-  .node.accent { background: var(--accent); color: #fff; border-color: var(--ink); }
-  .node.dark { background: var(--ink); color: var(--paper); }
-  .node .sub { display:block; font-family: var(--font-mono); font-weight: 400; font-size: 24px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); margin-top: 6px; }
-  .node.accent .sub { color: rgba(255,255,255,0.7); }
-  .node.dark .sub { color: rgba(242,237,225,0.6); }
-
-  /* Arrow */
-  .arrow { display: flex; align-items: center; color: var(--ink); font-family: var(--font-mono); font-size: 24px; }
-  .arrow .line { height: 2px; background: var(--ink); flex: 1; min-width: 40px; }
-  .arrow .tip { width: 0; height: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 14px solid var(--ink); }
-  .arrow.back .tip { border-left: 0; border-right: 14px solid var(--ink); }
-  .arrow .label { background: var(--paper); padding: 0 10px; color: var(--ink-2); white-space: nowrap; }
-
-  /* Code / tool payloads */
-  code.k { font-family: var(--font-mono); font-size: 1em; background: var(--paper-3); padding: 2px 8px; border-radius: 6px; }
-  .tool-call {
-    font-family: var(--font-mono);
-    font-size: 26px;
-    color: var(--accent-ink);
-    background: rgba(47,122,68,0.10);
-    border: 1px dashed rgba(47,122,68,0.45);
-    padding: 14px 22px;
-    border-radius: 14px;
-    display: inline-block;
-  }
 
   /* Numbered list */
   ol.big { list-style: none; padding: 0; margin: 0; counter-reset: bigc; }
@@ -160,51 +116,6 @@
   }
   ol.big .h { font-family: var(--font-display); font-weight: 600; font-size: 40px; letter-spacing: -0.02em; margin: 0 0 4px 0; }
   ol.big .p { font-size: 26px; color: var(--ink-2); margin: 0; max-width: 1100px; }
-
-  /* Two-col split layouts */
-  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; }
-
-  /* Big stat */
-  .stat { font-family: var(--font-display); font-weight: 500; font-size: 220px; line-height: 0.9; letter-spacing: -0.04em; }
-
-  /* Tag row */
-  .tags { display: flex; flex-wrap: wrap; gap: 14px; }
-
-  /* Portrait / media frame */
-  .frame {
-    background: var(--paper-3);
-    border-radius: 28px;
-    overflow: hidden;
-    position: relative;
-  }
-  .frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-  /* Terminal window */
-  .term {
-    background: #111110;
-    color: #e7e2d4;
-    border-radius: 16px;
-    font-family: var(--font-mono);
-    font-size: 24px;
-    line-height: 1.55;
-    padding: 24px 28px;
-    box-shadow: 6px 6px 0 rgba(0,0,0,0.2);
-    border: 1px solid #000;
-  }
-  .term .prompt { color: var(--accent); }
-  .term .mute { color: #8a8572; }
-  .term .hi { color: #f5e7a7; }
-  .term .topbar { display:flex; gap: 8px; margin-bottom: 14px; }
-  .term .topbar i { width: 12px; height: 12px; border-radius: 50%; background: #3c3a34; display: inline-block; }
-
-  /* Diagram: horizontal steps */
-  .flow { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-
-  /* Parallel stack */
-  .stack { display: flex; flex-direction: column; gap: 14px; }
-
-  /* Footer mark */
-  .signature { font-family: var(--font-mono); font-size: 24px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; }
 
   /* ── Title slide (reference style) ───────────────────────────────── */
   section.slide.title-slide {
@@ -367,38 +278,6 @@
     pointer-events: none;
     z-index: 1;
   }
-
-  /* Bullet list */
-  ul.clean { list-style: none; padding: 0; margin: 0; }
-  ul.clean li { padding: 16px 0; border-top: 1px solid var(--rule); font-size: 34px; color: var(--ink); display:flex; align-items:baseline; gap: 18px; }
-  ul.clean li:last-child { border-bottom: 1px solid var(--rule); }
-  ul.clean li::before {
-    content: ""; width: 10px; height: 10px; background: var(--accent); display: inline-block;
-    transform: translateY(-4px);
-    flex: 0 0 10px;
-  }
-  ul.clean.dark li { color: #f0ecdf; border-color: rgba(255,255,255,0.12); }
-
-  /* Pokemon slide screen */
-  .gbscreen {
-    background: #c6d09a;
-    color: #2a301b;
-    border-radius: 18px;
-    font-family: var(--font-mono);
-    padding: 22px 26px;
-    border: 4px solid #1a1f0f;
-    box-shadow: 8px 8px 0 rgba(0,0,0,0.15);
-    font-size: 24px;
-    line-height: 1.4;
-  }
-
-  /* Large quote */
-  .pull {
-    font-family: var(--font-display); font-weight: 400;
-    font-size: 84px; line-height: 1.08; letter-spacing: -0.025em;
-    max-width: 1500px;
-  }
-  .pull em { font-style: italic; color: var(--accent); font-weight: 500; }
 
   /* Global slide title weight override */
   section.slide h2.title { font-weight: 500; }
@@ -2098,7 +1977,7 @@
       </div>
 
       <!-- Info card -->
-      <div style="flex: 1; background: var(--card); border: 1.5px solid var(--ink); border-radius: 36px; padding: 44px 52px; display:flex; flex-direction: column; gap: 28px; max-width: 1180px; box-shadow: 6px 6px 0 var(--ink); margin-top: 80px">
+      <div style="flex: 1; background: var(--card); border: 1.5px solid var(--ink); border-radius: 36px; padding: 44px 52px; display:flex; flex-direction: column; gap: 28px; max-width: 1180px; box-shadow: 6px 6px 0 var(--ink); margin-top: 72px">
         <div style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 64px; line-height: 1.1; color: var(--ink); letter-spacing: -0.01em;">Ovidijus Parsiunas</div>
         <div style="display:flex; flex-direction: column; gap: 18px;">
           <div style="display:flex; align-items:center; gap: 18px; font-family: var(--font-mono); font-size: 28px; color: var(--ink-2);">
@@ -3662,300 +3541,6 @@
     <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; padding: 0 80px;">
       <div class="eyebrow" style="color: rgba(255,255,255,0.6);"><span class="sym" style="color:#7fc38f;">▍</span>ご清聴ありがとうございました</div>
       <h1 class="display" style="font-size: 150px; color: #f6f1e3; margin-top: 18px; line-height: 0.95; letter-spacing: -0.03em; font-weight: 500;">Thank you<em style="color:#7fc38f; font-style: normal;">!</em></h1>
-    </div>
-  </section>
-
-  <!-- 5. INTRODUCING TOOLS -->
-  <section class="slide" data-label="Tools intro">
-    <div class="chrome top"><span><span class="dot"></span>Chapter 02 · Tools</span><span>04 / 16</span></div>
-    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>The one idea</div>
-    <h2 class="title" style="max-width: 1650px;">You hand the model<br/>a menu of functions.</h2>
-    <div class="split" style="margin-top: 30px; align-items: start;">
-      <div class="col" style="gap: 28px;">
-        <div class="body" style="max-width: 760px;">The model doesn't execute anything itself — it <em>asks</em> you to. You run the function, hand back the result, it continues.</div>
-        <div class="tags" style="margin-top: 16px;">
-          <span class="chip"><span class="dot"></span>getForecast()</span>
-          <span class="chip"><span class="dot"></span>getStockPrice()</span>
-          <span class="chip"><span class="dot"></span>sendEmail()</span>
-          <span class="chip"><span class="dot"></span>toggleLight()</span>
-          <span class="chip ghost">+ anything with an API</span>
-        </div>
-      </div>
-      <div>
-        <div class="term" style="font-size: 24px;">
-          <div class="topbar"><i></i><i></i><i></i></div>
-          <div><span class="mute">// request to the API</span></div>
-          <div><span class="prompt">messages:</span> [</div>
-          <div>&nbsp;&nbsp;{ role: <span class="hi">"user"</span>,</div>
-          <div>&nbsp;&nbsp;&nbsp;&nbsp;content: <span class="hi">"weather in Tokyo?"</span> }</div>
-          <div>]</div>
-          <div><span class="prompt">tools:</span> [getForecast, getStockPrice, …]</div>
-          <div style="margin-top:14px;"><span class="mute">// model's reply</span></div>
-          <div>→ <span class="hi">tool_use</span>: getForecast(<span class="hi">"Tokyo"</span>)</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 5. TOOLS AS INPUTS (READ) -->
-  <section class="slide" data-label="Tools that read">
-    <div class="chrome top"><span><span class="dot"></span>Tools · reading the world</span><span>05 / 16</span></div>
-    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>Pattern 01</div>
-    <h2 class="title">Tools that fetch.</h2>
-
-    <div class="flow" style="margin-top: 40px; justify-content: center; gap: 24px;">
-      <div class="node lg">User<span class="sub">weather in Tokyo?</span></div>
-      <div class="arrow" style="width: 120px;"><div class="line"></div><div class="tip"></div></div>
-      <div class="node lg accent">LLM<span class="sub">+ tools menu</span></div>
-      <div class="arrow" style="width: 120px;"><div class="line"></div><div class="tip"></div></div>
-      <div class="node lg dark">API<span class="sub">getForecast()</span></div>
-    </div>
-    <div class="flow" style="margin-top: 44px; justify-content: center; gap: 24px;">
-      <div class="arrow back" style="width: 860px;"><div class="tip"></div><div class="line"></div><div class="label">19°C · partly cloudy</div><div class="line"></div></div>
-    </div>
-    <div class="body" style="text-align: center; margin-top: 48px; max-width: 1300px; margin-left: auto; margin-right: auto;">
-      Search engines, maps, databases, MCP servers — anything read-only the model wouldn't otherwise know.
-    </div>
-  </section>
-
-  <!-- 6. TOOLS AS OUTPUTS (ACT) -->
-  <section class="slide dark" data-label="Tools that act">
-    <div class="chrome top" style="color: rgba(255,255,255,0.55);"><span><span class="dot" style="background:#f2ede1"></span>Tools · acting on the world</span><span>06 / 16</span></div>
-    <div class="eyebrow" style="margin-top: 40px; color: rgba(255,255,255,0.6);"><span class="sym" style="color:#7fc38f;">▍</span>Pattern 02</div>
-    <h2 class="title" style="color: #f6f1e3;">Tools that <em style="color:#7fc38f; font-style: italic;">do</em>.</h2>
-    <div class="split" style="margin-top: 30px;">
-      <div>
-        <div class="body" style="color: rgba(246,241,227,0.8); font-size: 34px; max-width: 700px;">
-          Same mechanism — the model picks a function and arguments. But now the function flips a switch, sends a message, charges a card.
-        </div>
-        <div class="body" style="margin-top: 40px; color: #fff; font-size: 34px; max-width: 700px;">
-          <strong style="color:#7fc38f;">This is the line.</strong><br/>On one side: a chatbot.<br/>On the other: an actor in the world.
-        </div>
-      </div>
-      <div class="col" style="gap: 16px;">
-        <div class="tool-call" style="background: rgba(127,195,143,0.14); color: #7fc38f; border-color: rgba(127,195,143,0.5);">toggleLight(<span style="color:#fff;">"kitchen"</span>, on)</div>
-        <div class="tool-call" style="background: rgba(127,195,143,0.14); color: #7fc38f; border-color: rgba(127,195,143,0.5);">toggleHeater(<span style="color:#fff;">22</span>)</div>
-        <div class="tool-call" style="background: rgba(127,195,143,0.14); color: #7fc38f; border-color: rgba(127,195,143,0.5);">sendEmail(<span style="color:#fff;">"boss@…"</span>, …)</div>
-        <div class="tool-call" style="background: rgba(127,195,143,0.14); color: #7fc38f; border-color: rgba(127,195,143,0.5);">pressButton(<span style="color:#fff;">"A"</span>)</div>
-        <div class="tool-call" style="background: rgba(127,195,143,0.14); color: #7fc38f; border-color: rgba(127,195,143,0.5);">deployLander()</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 7. AGENTIC LOOP -->
-  <section class="slide" data-label="The agentic loop">
-    <div class="chrome top"><span><span class="dot"></span>Chapter 03 · The loop</span><span>07 / 16</span></div>
-    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>Agentic loop</div>
-    <h2 class="title">Act. Observe. Decide. Repeat.</h2>
-    <div class="split" style="margin-top: 30px;">
-      <div class="col" style="gap: 20px;">
-        <div class="term">
-          <div class="topbar"><i></i><i></i><i></i></div>
-          <div><span class="prompt">user:</span> <span class="hi">"warm up the living room"</span></div>
-          <div><span class="mute">↓</span></div>
-          <div><span class="prompt">model →</span> toggleHeater(22)</div>
-          <div><span class="prompt">result:</span> ok</div>
-          <div><span class="prompt">model →</span> getTemperature()</div>
-          <div><span class="prompt">result:</span> 10°C  <span class="mute">// still cold</span></div>
-          <div><span class="prompt">model →</span> toggleHeater(25)</div>
-          <div><span class="prompt">result:</span> ok</div>
-          <div><span class="prompt">model →</span> getTemperature()</div>
-          <div><span class="prompt">result:</span> <span style="color:#7fc38f;">21°C ✓</span></div>
-        </div>
-      </div>
-      <div class="col" style="gap: 28px;">
-        <div class="body" style="font-size: 36px; color: var(--ink);"><strong>This is what people mean by "agent"</strong> — a model wrapped in a loop it can drive.</div>
-        <div class="hr"></div>
-        <div class="small" style="font-size: 28px; line-height: 1.5;">
-          ⚠︎ Every turn re-sends the whole conversation.<br/>
-          Context — and cost — grow with each step.<br/>
-          Keep loops tight.
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 8. PARALLEL TOOLS -->
-  <section class="slide" data-label="Parallel tools">
-    <div class="chrome top"><span><span class="dot"></span>Chapter 03 · Optimisation</span><span>08 / 16</span></div>
-    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>Free speed-up</div>
-    <h2 class="title" style="max-width: 1650px;">The model can ask for<br/>many tools at once.</h2>
-    <div class="split" style="margin-top: 40px; align-items: start;">
-      <div class="col" style="gap: 20px;">
-        <div class="small" style="text-transform:uppercase; letter-spacing:0.08em; color: var(--ink-3); font-family: var(--font-mono);">Sequential · 4 round-trips</div>
-        <div class="stack">
-          <div class="node sm">→ move()  ← ok</div>
-          <div class="node sm">→ attack()  ← 10 HP</div>
-          <div class="node sm">→ jump()  ← ok</div>
-          <div class="node sm">→ attack()  ← 0 HP</div>
-        </div>
-      </div>
-      <div class="col" style="gap: 20px;">
-        <div class="small" style="text-transform:uppercase; letter-spacing:0.08em; color: var(--accent); font-family: var(--font-mono);">Parallel · 1 round-trip</div>
-        <div class="node accent" style="padding: 24px 28px;">
-          → move() · attack() · jump() · attack()
-          <span class="sub" style="margin-top:10px; font-size: 24px;">one turn, four results</span>
-        </div>
-        <div class="body" style="font-size: 28px; margin-top: 12px; max-width: 680px;">
-          Independent calls run together.<br/>Fewer tokens. Lower cost. Faster response.
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 9. THE PATTERN -->
-  <section class="slide cream" data-label="The pattern">
-    <div class="chrome top"><span><span class="dot"></span>Chapter 04 · The pattern</span><span>09 / 16</span></div>
-    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>Three boxes</div>
-    <h2 class="title">Input → Process → Output.</h2>
-    <div class="flow" style="margin-top: 80px; justify-content: center; gap: 28px;">
-      <div class="node lg" style="min-width: 340px; text-align: center;">INPUT<span class="sub">sensor · message · frame</span></div>
-      <div class="arrow" style="width: 90px;"><div class="line"></div><div class="tip"></div></div>
-      <div class="node lg accent" style="min-width: 340px; text-align: center;">PROCESS<span class="sub">LLM + tools</span></div>
-      <div class="arrow" style="width: 90px;"><div class="line"></div><div class="tip"></div></div>
-      <div class="node lg" style="min-width: 340px; text-align: center;">OUTPUT<span class="sub">action · write · command</span></div>
-    </div>
-    <div class="body" style="text-align: center; margin-top: 80px; font-size: 36px; color: var(--ink); max-width: 1400px; margin-left:auto; margin-right:auto;">
-      Once you see it, you start noticing it everywhere.
-    </div>
-  </section>
-
-  <!-- 10. SCALE -->
-  <section class="slide" data-label="Scaling the pattern">
-    <div class="chrome top"><span><span class="dot"></span>Chapter 04 · Scale</span><span>10 / 16</span></div>
-    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>Same shape, any domain</div>
-    <h2 class="title" style="max-width: 1650px;">It works for a light switch.<br/>It works for a rocket.</h2>
-    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 50px;">
-      <div class="col" style="gap: 14px; padding: 28px; background: var(--card); border-radius: 20px;">
-        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: var(--ink-3);">Home</div>
-        <div style="font-family: var(--font-display); font-weight: 600; font-size: 34px;">Warm the room</div>
-        <div class="body" style="font-size: 24px; margin-top: 6px;">temp reading → decide → toggle heater</div>
-      </div>
-      <div class="col" style="gap: 14px; padding: 28px; background: var(--card); border-radius: 20px;">
-        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: var(--ink-3);">Road</div>
-        <div style="font-family: var(--font-display); font-weight: 600; font-size: 34px;">Self-driving car</div>
-        <div class="body" style="font-size: 24px; margin-top: 6px;">red light seen → decide → brake</div>
-      </div>
-      <div class="col" style="gap: 14px; padding: 28px; background: var(--card); border-radius: 20px;">
-        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: var(--ink-3);">Game</div>
-        <div style="font-family: var(--font-display); font-weight: 600; font-size: 34px;">Play Pokémon</div>
-        <div class="body" style="font-size: 24px; margin-top: 6px;">screenshot → decide → press A</div>
-      </div>
-      <div class="col" style="gap: 14px; padding: 28px; background: var(--card); border-radius: 20px;">
-        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: var(--ink-3);">Desk</div>
-        <div style="font-family: var(--font-display); font-weight: 600; font-size: 34px;">Triage inbox</div>
-        <div class="body" style="font-size: 24px; margin-top: 6px;">new email → decide → reply or file</div>
-      </div>
-      <div class="col" style="gap: 14px; padding: 28px; background: var(--card); border-radius: 20px;">
-        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: var(--ink-3);">Air</div>
-        <div style="font-family: var(--font-display); font-weight: 600; font-size: 34px;">Assist a pilot</div>
-        <div class="body" style="font-size: 24px; margin-top: 6px;">sensor feed → decide → adjust trim</div>
-      </div>
-      <div class="col" style="gap: 14px; padding: 28px; background: var(--ink); color: #f2ede1; border-radius: 20px;">
-        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: rgba(255,255,255,0.5);">Space</div>
-        <div style="font-family: var(--font-display); font-weight: 600; font-size: 34px;">Land on the moon</div>
-        <div class="body" style="font-size: 24px; margin-top: 6px; color: rgba(246,241,227,0.75);">altitude reading → decide → deploy lander</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 11. POKEMON CASE STUDY -->
-  <section class="slide" data-label="Claude plays Pokemon">
-    <div class="chrome top"><span><span class="dot"></span>Case study</span><span>11 / 16</span></div>
-    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>Case study · in the wild</div>
-    <h2 class="title" style="max-width: 1500px;">An LLM<br/>plays Pokémon.</h2>
-    <div class="split" style="margin-top: 40px;">
-      <div class="col" style="gap: 28px;">
-        <div class="body" style="max-width: 720px; font-size: 34px;">
-          A community project hooked a model up to a Pokémon Red emulator and let it run. It plays — slowly, goofily, but it plays.
-        </div>
-        <div class="body" style="font-size: 28px; max-width: 720px;">
-          Same three-box pattern. Input is a screenshot plus game state. Process is the model. Output is a button press.
-        </div>
-        <div class="small" style="font-family: var(--font-mono); margin-top: 8px; font-size: 24px; color: var(--ink-3); line-height: 1.5;">
-          youtube.com/watch?v=pAkElOzD5Rw<br/>
-          github.com/davidhershey/ClaudePlaysPokemonStarter
-        </div>
-      </div>
-      <div>
-        <div class="gbscreen" style="font-size: 24px;">
-          <div style="font-family: var(--font-display); font-weight: 600; font-size: 28px; margin-bottom: 12px;">PALLET TOWN</div>
-          <div>▸ A wild PIDGEY appeared!</div>
-          <div style="margin-top: 10px;">PIDGEY  Lv. 5</div>
-          <div>HP ████████░░  24 / 30</div>
-          <div style="margin-top: 18px; color: #4a5a2a;">&gt; model chose: <strong>FIGHT → TACKLE</strong></div>
-          <div style="margin-top: 8px; color: #4a5a2a;">&gt; emulator: pressButton("A")</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 12. POKEMON ARCHITECTURE -->
-  <section class="slide cream" data-label="Pokemon architecture">
-    <div class="chrome top"><span><span class="dot"></span>Case study · architecture</span><span>12 / 16</span></div>
-    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>How it's wired</div>
-    <h2 class="title">The three-box diagram,<br/>concretely.</h2>
-    <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 24px; align-items: stretch; margin-top: 50px;">
-      <div class="col" style="gap: 12px; padding: 28px; background: #fff; border: 1.5px solid var(--ink); border-radius: 20px; box-shadow: 4px 4px 0 var(--ink);">
-        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: var(--ink-3);">INPUT</div>
-        <div style="font-family: var(--font-display); font-weight: 600; font-size: 30px;">Every few seconds</div>
-        <ul class="clean" style="margin-top: 8px;">
-          <li style="font-size: 24px; padding: 8px 0;">Screenshot of the screen</li>
-          <li style="font-size: 24px; padding: 8px 0;">Game stats from memory</li>
-          <li style="font-size: 24px; padding: 8px 0;">Prompt + running history</li>
-        </ul>
-      </div>
-      <div class="arrow" style="width: 60px; align-self: center;"><div class="line"></div><div class="tip"></div></div>
-      <div class="col" style="gap: 12px; padding: 28px; background: var(--accent); color: #fff; border: 1.5px solid var(--ink); border-radius: 20px; box-shadow: 4px 4px 0 var(--ink);">
-        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: rgba(255,255,255,0.7);">PROCESS</div>
-        <div style="font-family: var(--font-display); font-weight: 600; font-size: 30px;">LLM + tools</div>
-        <ul class="clean dark" style="margin-top: 8px;">
-          <li style="font-size: 24px; padding: 8px 0; color: #fff;">Reason over screen + state</li>
-          <li style="font-size: 24px; padding: 8px 0; color: #fff;">Choose: press key, or route?</li>
-          <li style="font-size: 24px; padding: 8px 0; color: #fff;">Loop until confident</li>
-        </ul>
-      </div>
-      <div class="arrow" style="width: 60px; align-self: center;"><div class="line"></div><div class="tip"></div></div>
-      <div class="col" style="gap: 12px; padding: 28px; background: #fff; border: 1.5px solid var(--ink); border-radius: 20px; box-shadow: 4px 4px 0 var(--ink);">
-        <div class="small" style="font-family: var(--font-mono); text-transform: uppercase; color: var(--ink-3);">OUTPUT</div>
-        <div style="font-family: var(--font-display); font-weight: 600; font-size: 30px;">Tool calls</div>
-        <ul class="clean" style="margin-top: 8px;">
-          <li style="font-size: 24px; padding: 8px 0;"><code class="k">pressButton("A")</code></li>
-          <li style="font-size: 24px; padding: 8px 0;"><code class="k">navigateTo("gym")</code></li>
-          <li style="font-size: 24px; padding: 8px 0;">Emulator executes</li>
-        </ul>
-      </div>
-    </div>
-    <div class="small" style="margin-top: 44px; text-align: center; font-size: 28px;">
-      Swap the three boxes and you have a trading bot, a home-automation agent, or a rover. The shape doesn't change.
-    </div>
-  </section>
-
-  <!-- 15. RECAP -->
-  <section class="slide" data-label="Recap">
-    <div class="chrome top"><span><span class="dot"></span>Recap</span><span>15 / 16</span></div>
-    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>The whole talk, in four lines</div>
-    <div style="display: flex; flex-direction: column; justify-content: center; margin-top: 40px; gap: 38px;">
-      <div class="pull">Chat is one surface.</div>
-      <div class="pull">The API gives you <em>tools</em>.</div>
-      <div class="pull">A loop around tools is an <em>agent</em>.</div>
-      <div class="pull">Input → process → output, applied <em>everywhere</em>.</div>
-    </div>
-  </section>
-
-  <!-- 16. THANK YOU / Q&A -->
-  <section class="slide" data-label="Thank you">
-    <div class="chrome top"><span><span class="dot"></span>Fin</span><span>16 / 16</span></div>
-    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; margin-top: 60px; align-items: end; height: 820px;">
-      <div style="align-self: end;">
-        <div class="eyebrow"><span class="sym">▍</span>Q &amp; A / 質問</div>
-        <h1 class="display" style="font-size: 200px;">Thank<br/>you.</h1>
-        <div class="lede" style="max-width: 760px; margin-top: 20px;">
-          Questions — or tell me what you'd wire an LLM up to.
-        </div>
-        <div class="signature" style="margin-top: 40px;">Ovidijus Parsiunas · LLMs beyond chat · 2026</div>
-      </div>
-      <div class="frame" style="height: 720px;"><img src="assets/presenter.jpg" alt=""/></div>
     </div>
   </section>
 
