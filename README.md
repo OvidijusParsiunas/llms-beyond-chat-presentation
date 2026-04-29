@@ -19,20 +19,10 @@ https://github.com/davidhershey/ClaudePlaysPokemonStarter
 
 https://github.com/OvidijusParsiunas/agentic-airport
 
-## Tips:
+Programmatic tools:
 
-- Multiple calls > single conversation
-- Reduce costs with specialised agents (e.g. skills in claude code)
-- Be aware that AI is not deterministic, try to use hard rules
-- API outages can happen
+https://platform.claude.com/cookbook/tool-use-programmatic-tool-calling-ptc
 
+Websockets:
 
-## Future:
-- Programmatic tools
-- Websockets
-- Models will get smarter, faster, cheaper
-- Edge computing
-
-## Questions?
-
-## Thankyou
+https://developers.openai.com/api/docs/guides/websocket-mode
