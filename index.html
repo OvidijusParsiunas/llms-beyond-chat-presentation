@@ -1877,6 +1877,76 @@
     opacity: 1;
     transform: none;
   }
+
+  /* Top-right hover controls — fades in on mouse movement, hides on idle. */
+  .hover-controls {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.78);
+    color: #fff;
+    border-radius: 999px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.01em;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px) scale(0.92);
+    filter: blur(6px);
+    transition: opacity 260ms ease, transform 260ms cubic-bezier(.2,.8,.2,1), filter 260ms ease;
+    transform-origin: center top;
+    z-index: 2147483000;
+    user-select: none;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+  .hover-controls[data-visible] {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+  .hover-controls .hc-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.72);
+    cursor: pointer;
+    transition: background 140ms ease, color 140ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hover-controls .hc-btn:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+  .hover-controls .hc-btn:active { background: rgba(255, 255, 255, 0.18); }
+  .hover-controls .hc-btn:focus,
+  .hover-controls .hc-btn:focus-visible { outline: none; }
+  .hover-controls .hc-btn svg { width: 14px; height: 14px; display: block; }
+  .hover-controls .hc-count {
+    font-variant-numeric: tabular-nums;
+    color: #fff;
+    font-weight: 500;
+    padding: 0 8px;
+    min-width: 42px;
+    text-align: center;
+    font-size: 12px;
+  }
+  .hover-controls .hc-count .hc-sep { color: rgba(255, 255, 255, 0.45); margin: 0 3px; font-weight: 400; }
+  .hover-controls .hc-count .hc-total { color: rgba(255, 255, 255, 0.55); }
+  @media print {
+    .hover-controls { display: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -3545,6 +3615,49 @@
   </section>
 
 </deck-stage>
+
+<div class="hover-controls" role="toolbar" aria-label="Slide navigation">
+  <button class="hc-btn hc-prev" type="button" aria-label="Previous slide" title="Previous (←)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
+  </button>
+  <span class="hc-count" aria-live="polite"><span class="hc-current">1</span><span class="hc-sep">/</span><span class="hc-total">1</span></span>
+  <button class="hc-btn hc-next" type="button" aria-label="Next slide" title="Next (→)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+  </button>
+</div>
+
+<script>
+  (function () {
+    const stage = document.querySelector('deck-stage');
+    const overlay = document.querySelector('.hover-controls');
+    if (!stage || !overlay) return;
+
+    const currentEl = overlay.querySelector('.hc-current');
+    const totalEl = overlay.querySelector('.hc-total');
+    const HIDE_MS = 1800;
+    let hideTimer = null;
+
+    function flash() {
+      overlay.setAttribute('data-visible', '');
+      if (hideTimer) clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => overlay.removeAttribute('data-visible'), HIDE_MS);
+    }
+
+    function updateCount(index, total) {
+      currentEl.textContent = String((index || 0) + 1);
+      totalEl.textContent = String(total || 1);
+    }
+
+    stage.addEventListener('slidechange', (e) => updateCount(e.detail.index, e.detail.total));
+    if (stage.length) updateCount(stage.index, stage.length);
+
+    window.addEventListener('mousemove', flash, { passive: true });
+    overlay.addEventListener('mousemove', flash);
+
+    overlay.querySelector('.hc-prev').addEventListener('click', (e) => { e.preventDefault(); stage.prev(); flash(); });
+    overlay.querySelector('.hc-next').addEventListener('click', (e) => { e.preventDefault(); stage.next(); flash(); });
+  })();
+</script>
 
 <script>
   (function () {
