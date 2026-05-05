@@ -18,6 +18,10 @@ https://developers.openai.com/api/docs/guides/websocket-mode
 
 ## 🎮 Claude plays Pokemon:
 
+Official stream:
+https://www.twitch.tv/claudeplayspokemon
+
+Demo video:
 https://www.youtube.com/watch?v=pAkElOzD5Rw
 
 Architecture:
