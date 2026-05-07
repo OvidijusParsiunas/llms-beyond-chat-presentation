@@ -726,6 +726,63 @@
   section.slide[data-tools-step="18"] .cm-arrow-19-stock,
   section.slide[data-tools-step="19"] .cm-arrow-19-stock,
   section.slide[data-tools-step="20"] .cm-arrow-19-stock { opacity: 1; }
+
+  /* "History +" sub-step at step 7 of the Tools animation (slide 4):
+     when data-history-shown="1", the History + label fades in beside
+     the 19°C arrow text and pushes it a little to the right. A second
+     click sets data-history-shown="2" (hidden again); a third click
+     advances to step 8. The element is also present on the static
+     copies of this diagram (slides 5, recap) but stays hidden there
+     because data-history-shown is only ever toggled on slide 4. */
+  .cm-arrow-19-history {
+    font-family: 'Comfortaa', var(--font-display);
+    font-weight: 500;
+    font-size: 34px;
+    color: var(--ink);
+    white-space: nowrap;
+    max-width: 0;
+    margin-right: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      max-width 450ms cubic-bezier(.2,.7,.2,1),
+      margin-right 450ms cubic-bezier(.2,.7,.2,1),
+      opacity 300ms cubic-bezier(.2,.7,.2,1);
+  }
+  section.slide[data-label="The chat model · final"][data-history-shown="1"] .cm-arrow-19-history {
+    max-width: 220px;
+    margin-right: 18px;
+    opacity: 1;
+  }
+
+  /* "History +" sub-step at pkmn step 13 (slide 8) — after the retry
+     "move()" chip appears (the last move() badge in the pkmn flow).
+     First click shifts the 10HP and 0HP arrow labels right and reveals
+     "History +" beside each; second click hides them; third click
+     advances to step 14. Scoped to data-pkmn-step="13" so it can only
+     fire on slide 8 (slide 9 inherits pkmn-step=15). */
+  .pkmn-arrow-19-history,
+  .pkmn-arrow-fail-history {
+    font-family: 'Comfortaa', var(--font-display);
+    font-weight: 500;
+    font-size: 34px;
+    color: var(--ink);
+    white-space: nowrap;
+    max-width: 0;
+    margin-right: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      max-width 450ms cubic-bezier(.2,.7,.2,1),
+      margin-right 450ms cubic-bezier(.2,.7,.2,1),
+      opacity 300ms cubic-bezier(.2,.7,.2,1);
+  }
+  section.slide.pkmn-slide[data-pkmn-step="13"][data-history-shown="1"] .pkmn-arrow-19-history,
+  section.slide.pkmn-slide[data-pkmn-step="13"][data-history-shown="1"] .pkmn-arrow-fail-history {
+    max-width: 220px;
+    margin-right: 18px;
+    opacity: 1;
+  }
   section.slide[data-tools-step="12"] .cm-arrow-r2-text,
   section.slide[data-tools-step="13"] .cm-arrow-r2-text,
   section.slide[data-tools-step="14"] .cm-arrow-r2-text,
@@ -1370,7 +1427,7 @@
      first click, data-pkmn-step is set on the slide and the rules below
      override the inherited visuals to play through a Pokemon-themed flow:
        1: clear bubbles + arrow text/badges (lines stay visible)
-       2: bubble-q "Next move"
+       2: bubble-q "Approaching enemy"
        3: cm-arrow-q "Question / Context + move() / attack()"
        4: LLM thinks
        5: cm-arrow-r attack() chip
@@ -1465,7 +1522,7 @@
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .pkmn-arrow-fail-text { display: none; }
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .tf3-arrow-retry-chip { display: inline-flex; }
 
-  /* Step 2+ : bubble-q reappears with "Next move" */
+  /* Step 2+ : bubble-q reappears with "Approaching enemy" */
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="2"] .cm-diagram .cm-bubble-q,
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="3"] .cm-diagram .cm-bubble-q,
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="4"] .cm-diagram .cm-bubble-q,
@@ -1696,7 +1753,7 @@
      Slide enters as the frozen six-arrow "Input/output()" state from slide 8.
      Each click sets data-car-step (1→9) and toggles a corresponding class on
      the slide so the labels swap to a self-driving-car narrative:
-       1: chat user bubble  "Next move"  → "Drive a car"
+       1: chat user bubble  "Approaching enemy"  → "Drive a car"
        2: top Input         "Input"      → "Car is stationary"
        3: LLM thinking pulse
        4: top output()      "output()"   → accelerate()
@@ -1813,7 +1870,7 @@
   }
 
   /* Step 10 — bubble swap. .car-show-bubble stays on the section to keep the
-     "Next move" pkmn variant hidden; .rocket-show-bubble layers on top to
+     "Approaching enemy" pkmn variant hidden; .rocket-show-bubble layers on top to
      hide car-bubble-q and show rocket-bubble-q. The car-show-input/output
      classes get removed in JS so pkmn-final-* fades back to "Input"/"output()". */
   section.slide.tf3-slide.pkmn-slide.rocket-show-bubble .cm-bubble-q .car-bubble-q { display: none; }
@@ -2265,6 +2322,7 @@
             <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="cm-arrow-19-history">History +</div>
             <div class="cm-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">19°C and partly cloudy</div>
             <div class="cm-arrow-19-stock" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">$370</div>
           </div>
@@ -2405,6 +2463,7 @@
             <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="cm-arrow-19-history">History +</div>
             <div class="cm-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">19°C and partly cloudy</div>
             <div class="cm-arrow-19-stock" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">$370</div>
           </div>
@@ -2722,7 +2781,7 @@
             <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
-            <div class="tf3-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">Fail</div>
+            <div class="tf3-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">20°C</div>
           </div>
         </div>
         <!-- Step 15+: LLM → Chat retry arrow with toggleHeater() badge -->
@@ -2733,7 +2792,7 @@
           </div>
           <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
             <span class="chip">toggleHeater()</span>
-            <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span>
+            <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ OFF</span>
           </div>
         </div>
       </div>
@@ -2822,7 +2881,7 @@
         <div class="cm-label cm-chat-label" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 56px; color: var(--ink); letter-spacing: -0.01em;">Chat</div>
         <div class="cm-chat-box" style="width: 380px; height: 500px; background: #3a3a38; border-radius: 28px; padding: 22px 18px; display:flex; flex-direction:column; justify-content: space-between; box-shadow: 6px 6px 0 rgba(0,0,0,0.08); border: 1px solid #2a2a28;">
           <div style="display:flex; flex-direction:column; gap: 14px;">
-            <div class="cm-bubble cm-bubble-q cm-on" style="align-self: flex-end; background: rgb(117, 117, 117); color: #fff; border-radius: 14px 14px 4px 14px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 85%;"><span class="cm-bubble-old">How are you doing?</span><span class="cm-bubble-new">What is the weather in Tokyo?</span><span class="cm-bubble-stock">What is the stock price of Tesla?</span><span class="tf2-bubble-q-toggle">Turn on the light</span><span class="tf3-bubble-q-temp">Control temperature</span><span class="pkmn-bubble-q">Next move</span></div>
+            <div class="cm-bubble cm-bubble-q cm-on" style="align-self: flex-end; background: rgb(117, 117, 117); color: #fff; border-radius: 14px 14px 4px 14px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 85%;"><span class="cm-bubble-old">How are you doing?</span><span class="cm-bubble-new">What is the weather in Tokyo?</span><span class="cm-bubble-stock">What is the stock price of Tesla?</span><span class="tf2-bubble-q-toggle">Turn on the light</span><span class="tf3-bubble-q-temp">Control temperature</span><span class="pkmn-bubble-q">Approaching enemy</span></div>
             <div class="cm-bubble cm-bubble-r cm-on" style="align-self: flex-start; background:#e8e3d5; color:#1b1b1a; border-radius: 14px 14px 14px 4px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 70%;"><span class="cm-bubble-old">I'm doing great, thanks for asking!</span><span class="cm-bubble-new">Tokyo is currently around 19°C and partly cloudy</span><span class="cm-bubble-stock">It's trading around the mid-$370 range today.</span><span class="tf2-bubble-r-toggle">Done</span></div>
           </div>
           <div class="cm-input" style="display:flex; align-items:center; gap: 10px; background:#55534f; border-radius: 10px; padding: 12px 14px;">
@@ -2871,6 +2930,7 @@
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="tf3-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">10°C</div>
+            <div class="pkmn-arrow-19-history">History +</div>
             <div class="pkmn-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">10HP</div>
             <div class="pkmn-final-input">Input</div>
           </div>
@@ -2894,7 +2954,8 @@
             <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
-            <div class="tf3-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">Fail</div>
+            <div class="tf3-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">20°C</div>
+            <div class="pkmn-arrow-fail-history">History +</div>
             <div class="pkmn-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">0HP</div>
             <div class="pkmn-final-input">Input</div>
           </div>
@@ -2905,7 +2966,7 @@
             <div style="flex:1; height: 3px; background: var(--ink);"></div>
           </div>
           <div style="display: flex; align-items: center; justify-content: center;">
-            <span class="tf3-arrow-retry-chip"><span class="chip">toggleHeater()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+            <span class="tf3-arrow-retry-chip"><span class="chip">toggleHeater()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ OFF</span></span>
             <span class="pkmn-arrow-retry-chip"><span class="chip">move()</span></span>
             <span class="pkmn-final-output"><span class="chip">output()</span></span>
           </div>
@@ -2995,7 +3056,7 @@
         <div class="cm-label cm-chat-label" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 56px; color: var(--ink); letter-spacing: -0.01em;">Chat</div>
         <div class="cm-chat-box" style="width: 380px; height: 500px; background: #3a3a38; border-radius: 28px; padding: 22px 18px; display:flex; flex-direction:column; justify-content: space-between; box-shadow: 6px 6px 0 rgba(0,0,0,0.08); border: 1px solid #2a2a28;">
           <div style="display:flex; flex-direction:column; gap: 14px;">
-            <div class="cm-bubble cm-bubble-q cm-on" style="align-self: flex-end; background: rgb(117, 117, 117); color: #fff; border-radius: 14px 14px 4px 14px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 85%;"><span class="cm-bubble-old">How are you doing?</span><span class="cm-bubble-new">What is the weather in Tokyo?</span><span class="cm-bubble-stock">What is the stock price of Tesla?</span><span class="tf2-bubble-q-toggle">Turn on the light</span><span class="tf3-bubble-q-temp">Control temperature</span><span class="pkmn-bubble-q">Next move</span><span class="car-bubble-q">Drive a car</span><span class="rocket-bubble-q">Launch a rocket to the moon</span></div>
+            <div class="cm-bubble cm-bubble-q cm-on" style="align-self: flex-end; background: rgb(117, 117, 117); color: #fff; border-radius: 14px 14px 4px 14px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 85%;"><span class="cm-bubble-old">How are you doing?</span><span class="cm-bubble-new">What is the weather in Tokyo?</span><span class="cm-bubble-stock">What is the stock price of Tesla?</span><span class="tf2-bubble-q-toggle">Turn on the light</span><span class="tf3-bubble-q-temp">Control temperature</span><span class="pkmn-bubble-q">Approaching enemy</span><span class="car-bubble-q">Drive a car</span><span class="rocket-bubble-q">Launch a rocket to the moon</span></div>
             <div class="cm-bubble cm-bubble-r cm-on" style="align-self: flex-start; background:#e8e3d5; color:#1b1b1a; border-radius: 14px 14px 14px 4px; padding: 14px 16px; font-size: 24px; line-height: 1.3; max-width: 70%;"><span class="cm-bubble-old">I'm doing great, thanks for asking!</span><span class="cm-bubble-new">Tokyo is currently around 19°C and partly cloudy</span><span class="cm-bubble-stock">It's trading around the mid-$370 range today.</span><span class="tf2-bubble-r-toggle">Done</span><span class="rocket-bubble-r">Successfully landed</span></div>
           </div>
           <div class="cm-input" style="display:flex; align-items:center; gap: 10px; background:#55534f; border-radius: 10px; padding: 12px 14px;">
@@ -3075,7 +3136,7 @@
             <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
-            <div class="tf3-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">Fail</div>
+            <div class="tf3-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">20°C</div>
             <div class="pkmn-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">0HP</div>
             <div class="pkmn-final-input">Input</div>
             <div class="car-input-2">Nearing red light</div>
@@ -3286,6 +3347,7 @@
             <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="cm-arrow-19-history">History +</div>
             <div class="cm-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">19°C and partly cloudy</div>
             <div class="cm-arrow-19-stock" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">$370</div>
           </div>
@@ -3472,6 +3534,7 @@
             <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="cm-arrow-19-history">History +</div>
             <div class="cm-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">19°C and partly cloudy</div>
             <div class="cm-arrow-19-stock" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">$370</div>
           </div>
@@ -3799,6 +3862,20 @@
         s.setAttribute('data-tesla-shown', '1');
         return true;
       }
+      // Sub-steps at step 7: first click reveals "History +" beside the
+      // "19°C and partly cloudy" arrow text (which shifts right); a second
+      // click hides it again; a third click advances to step 8.
+      if (step === 7) {
+        const h = s.getAttribute('data-history-shown');
+        if (h !== '1' && h !== '2') {
+          s.setAttribute('data-history-shown', '1');
+          return true;
+        }
+        if (h === '1') {
+          s.setAttribute('data-history-shown', '2');
+          return true;
+        }
+      }
       if (step >= 20) return false;
       const next = step + 1;
       s.setAttribute('data-tools-step', String(next));
@@ -3833,6 +3910,7 @@
       s.removeAttribute('data-tools-content');
       s.removeAttribute('data-tokyo-shown');
       s.removeAttribute('data-tesla-shown');
+      s.removeAttribute('data-history-shown');
       const mb = s.querySelector('.cm-model-box');
       if (mb) mb.classList.remove('cm-thinking');
       const cb = s.querySelector('.cm-chat-box');
@@ -3978,7 +4056,7 @@
 
     // ── Slide 8 (.pkmn-slide) — Pokemon retry flow ──
     //  1: cleared (bubbles + arrow text/badges hidden, lines stay)
-    //  2: bubble-q "Next move"
+    //  2: bubble-q "Approaching enemy"
     //  3: cm-arrow-q "Question / Context + move() / attack()"
     //  4: LLM thinks (cm-model-box pulse)
     //  5: cm-arrow-r attack() chip
@@ -4002,6 +4080,21 @@
       const s = pokemonSlide();
       if (!s) return false;
       const step = parseInt(s.getAttribute('data-pkmn-step') || '0', 10);
+      // Sub-steps at step 13 (after the retry move() chip — the last move()
+      // badge — appears): first click reveals "History +" beside the 10HP
+      // and 0HP arrow labels (which shift right); a second click hides
+      // them again; a third click advances to step 14.
+      if (step === 13) {
+        const h = s.getAttribute('data-history-shown');
+        if (h !== '1' && h !== '2') {
+          s.setAttribute('data-history-shown', '1');
+          return true;
+        }
+        if (h === '1') {
+          s.setAttribute('data-history-shown', '2');
+          return true;
+        }
+      }
       if (step >= 15) return false;
       const next = step + 1;
       s.setAttribute('data-pkmn-step', String(next));
@@ -4017,6 +4110,7 @@
       const s = pokemonSlide();
       if (!s) return;
       s.removeAttribute('data-pkmn-step');
+      s.removeAttribute('data-history-shown');
       const llm = s.querySelector('.cm-model-box');
       if (llm) llm.classList.remove('cm-thinking');
       const chat = s.querySelector('.cm-chat-box');
@@ -4068,7 +4162,7 @@
       if (next === 10) {
         // Bubble swap to "Launch a rocket to the moon" + revert all arrow
         // labels to Input / output(). car-show-bubble stays so pkmn-bubble-q
-        // ("Next move") remains hidden under the new rocket bubble.
+        // ("Approaching enemy") remains hidden under the new rocket bubble.
         s.classList.remove(
           'car-show-input-1', 'car-show-input-2', 'car-show-input-3',
           'car-show-output-1', 'car-show-output-2', 'car-show-output-3'
