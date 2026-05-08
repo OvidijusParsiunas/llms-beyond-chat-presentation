@@ -2241,7 +2241,7 @@
             <div style="flex:1; height: 3px; background: var(--ink);"></div>
             <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
           </div>
-          <div style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Prompt</div>
+          <div style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);"><span class="cm-arrow-q-text">Input</span></div>
         </div>
         <div class="cm-arrow cm-arrow-r" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
           <div style="display:flex; align-items:center; width: 100%;">
@@ -2935,8 +2935,8 @@
        on this slide falls through to the next slide in the deck. -->
   <section class="slide tf3-slide pkmn-slide" data-label="Tools · final 2" data-tools-step="20" data-tools-content="stock" data-tf2-step="6" data-tf3-step="17">
     <div class="chrome top"><span><span class="dot"></span>Chapter 01 · Foundations</span><span>08 / 17</span></div>
-    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>基本のチャット</div>
-    <h2 class="title" style="font-weight: 600; margin-top: 24px; margin-bottom: 37px;">Tools</h2>
+    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>エージェントループ</div>
+    <h2 class="title" style="font-weight: 600; margin-top: 24px; margin-bottom: 37px;">Agentic Loop</h2>
 
     <div class="cm-diagram" data-cm-step="12" style="display:grid; grid-template-columns: 1fr 1.1fr 1fr; align-items:center; gap: 40px; margin-top: 40px;">
 
@@ -4302,6 +4302,8 @@
       d.querySelectorAll('.cm-bubble, .cm-arrow').forEach(el => el.classList.remove('cm-on'));
       const mb = d.querySelector('.cm-model-box');
       if (mb) mb.classList.remove('cm-thinking');
+      const txt = d.querySelector('.cm-arrow-q-text');
+      if (txt) txt.textContent = 'Input';
       // cancel any pending timers
       if (d._cmTimers) { d._cmTimers.forEach(clearTimeout); d._cmTimers = []; }
     }
@@ -4344,6 +4346,11 @@
       if (step === 7)  { cmSetStep(8);  if (q)  q.classList.add('cm-on');  return true; }
       if (step === 8)  { cmSetStep(9);  if (aq) aq.classList.add('cm-on'); return true; }
       if (step === 9)  {
+        const txt = d.querySelector('.cm-arrow-q-text');
+        if (txt && txt.textContent === 'Input') {
+          txt.textContent = 'Prompt';
+          return true;
+        }
         cmSetStep(10);
         if (mb) { mb.classList.remove('cm-thinking'); void mb.offsetWidth; mb.classList.add('cm-thinking'); }
         return true;
