@@ -418,19 +418,19 @@
      0: both bubbles visible (default)
      1: both bubbles hidden
      2: request bubble back, response stays hidden
-     3: Question shifts left, "+" + getForecast() chip fade in
+     3: Question shifts left, "+" + getForecast chip fade in
      4: LLM thinks
-     5: Response label → getForecast() chip
+     5: Response label → getForecast chip
      6: Chat thinks
      7: "19°C and partly cloudy" arrow appears
      8: LLM thinks again
      9: second Response arrow appears
      10: response bubble reappears
-     11: getStockPrice() chip fades in below getForecast()
+     11: getStockPrice chip fades in below getForecast
      12: clear bubbles, getForecast chip, "19°C…", and "Response" (arrows stay)
      13: request bubble "What is the stock price of Tesla?"
      14: LLM thinks
-     15: getStockPrice() chip appears on first response arrow
+     15: getStockPrice chip appears on first response arrow
      16: Chat thinks
      17: "$370" appears where "19°C and partly cloudy" was
      18: LLM thinks again
@@ -510,7 +510,7 @@
   section.slide[data-tools-step="19"] .cm-tools-add,
   section.slide[data-tools-step="20"] .cm-tools-add { overflow: visible; }
 
-  /* getStockPrice() chip appears directly below getForecast() at step 11+ */
+  /* getStockPrice chip appears directly below getForecast at step 11+ */
   .cm-forecast-wrap { position: relative; display: inline-flex; }
   .cm-tools-stock {
     position: absolute;
@@ -530,7 +530,7 @@
   section.slide[data-tools-step="19"] .cm-tools-stock,
   section.slide[data-tools-step="20"] .cm-tools-stock { opacity: 1; }
 
-  /* Response label ↔ getForecast() chip swap (step 5+) */
+  /* Response label ↔ getForecast chip swap (step 5+) */
   .cm-resp-text { transition: opacity 300ms cubic-bezier(.2,.7,.2,1); }
   .cm-resp-chip { opacity: 0; transition: opacity 300ms cubic-bezier(.2,.7,.2,1); }
   section.slide[data-tools-step="5"] .cm-resp-text,
@@ -570,7 +570,7 @@
   section.slide[data-tokyo-shown="1"] .cm-resp-tokyo { opacity: 1; }
   section.slide[data-tesla-shown="1"] .cm-resp-tesla { opacity: 1; }
 
-  /* Recap slide (14b): one click swaps the "getStockPrice() + Tesla" response
+  /* Recap slide (14b): one click swaps the "getStockPrice + Tesla" response
      chip for plain "<code/>" text. */
   .cm-resp-code { opacity: 0; transition: opacity 300ms cubic-bezier(.2,.7,.2,1); }
   section.slide[data-recap-step="1"] .cm-resp-chip { opacity: 0; }
@@ -601,7 +601,7 @@
   section.slide[data-recap2-step="1"] .cm-arrow-q-left { opacity: 1; }
   /* Hide only each lower arrow's line+arrowhead (the first child div), leaving
      the text/chip label (second child) in place. This preserves the column's
-     vertical rhythm — "getStockPrice() + Tesla", "$370", and "Response" stay
+     vertical rhythm — "getStockPrice + Tesla", "$370", and "Response" stay
      where they were, but the lines connecting them to Chat and LLM disappear,
      so the only visible connector is the bidirectional top arrow. */
   section.slide[data-label="Tools · final (recap 2)"] .cm-arrow-r > div:first-child,
@@ -629,7 +629,7 @@
   section.slide[data-tools-content="stock"] .cm-bubble-old,
   section.slide[data-tools-content="stock"] .cm-bubble-new { display: none; }
   section.slide[data-tools-content="stock"] .cm-bubble-stock { display: inline; }
-  /* The cm-resp-chip text also swaps from getForecast() to getStockPrice()
+  /* The cm-resp-chip text also swaps from getForecast to getStockPrice
      while it's invisible (steps 12-14). */
   .cm-resp-chip-stock { display: none; }
   section.slide[data-tools-content="stock"] .cm-resp-chip-old { display: none; }
@@ -756,11 +756,14 @@
   }
 
   /* "History +" sub-step at pkmn step 13 (slide 8) — after the retry
-     "move()" chip appears (the last move() badge in the pkmn flow).
+     "move" chip appears (the last move badge in the pkmn flow).
      First click shifts the 10HP and 0HP arrow labels right and reveals
-     "History +" beside each; second click hides them; third click
-     advances to step 14. Scoped to data-pkmn-step="13" so it can only
-     fire on slide 8 (slide 9 inherits pkmn-step=15). */
+     "History +" beside each; second click swaps "History +" out for a
+     "Prompt / State + move/attack" badge cluster (showing that instead
+     of replaying history, the chat can issue a fresh request with the
+     full state inline); third click advances to step 14. Scoped to
+     data-pkmn-step="13" so it can only fire on slide 8 (slide 9
+     inherits pkmn-step=15). */
   .pkmn-arrow-19-history,
   .pkmn-arrow-fail-history {
     font-family: 'Comfortaa', var(--font-display);
@@ -783,6 +786,67 @@
     margin-right: 18px;
     opacity: 1;
   }
+
+  /* "Prompt / State + move / attack" replacement (data-history-shown="2"
+     on slide 8 step 13). Sits in the same slot as the History + label
+     so the swap reads as "send a fresh request with the full state +
+     tools rather than sending history". When state="2" we also collapse
+     the 10HP / 0HP labels (further down) so the cluster has the full
+     arrow column width to breathe. */
+  .pkmn-arrow-19-state,
+  .pkmn-arrow-fail-state {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      max-width 450ms cubic-bezier(.2,.7,.2,1),
+      opacity 300ms cubic-bezier(.2,.7,.2,1);
+  }
+  .pkmn-arrow-19-state .pkmn-state-text,
+  .pkmn-arrow-fail-state .pkmn-state-text {
+    font-family: 'Comfortaa', var(--font-display);
+    font-weight: 500;
+    font-size: 32px;
+    color: var(--ink);
+  }
+  .pkmn-arrow-19-state .pkmn-state-plus,
+  .pkmn-arrow-fail-state .pkmn-state-plus {
+    font-family: 'Comfortaa', var(--font-display);
+    font-weight: 500;
+    font-size: 32px;
+    color: var(--warn);
+  }
+  .pkmn-arrow-19-state .chip,
+  .pkmn-arrow-fail-state .chip {
+    font-size: 22px;
+    padding: 8px 16px;
+    gap: 8px;
+  }
+  section.slide.pkmn-slide[data-pkmn-step="13"][data-history-shown="2"] .pkmn-arrow-19-state,
+  section.slide.pkmn-slide[data-pkmn-step="13"][data-history-shown="2"] .pkmn-arrow-fail-state {
+    max-width: 700px;
+    opacity: 1;
+    overflow: visible;
+  }
+
+  /* Collapse 10HP / 0HP labels when the Prompt/State + move/attack
+     cluster takes their place at step 13 + history-shown="2". */
+  section.slide.tf3-slide.pkmn-slide .pkmn-arrow-19-text,
+  section.slide.tf3-slide.pkmn-slide .pkmn-arrow-fail-text {
+    overflow: hidden;
+    transition:
+      max-width 450ms cubic-bezier(.2,.7,.2,1),
+      opacity 300ms cubic-bezier(.2,.7,.2,1);
+  }
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="13"][data-history-shown="2"] .pkmn-arrow-19-text,
+  section.slide.tf3-slide.pkmn-slide[data-pkmn-step="13"][data-history-shown="2"] .pkmn-arrow-fail-text {
+    max-width: 0;
+    opacity: 0;
+  }
   section.slide[data-tools-step="12"] .cm-arrow-r2-text,
   section.slide[data-tools-step="13"] .cm-arrow-r2-text,
   section.slide[data-tools-step="14"] .cm-arrow-r2-text,
@@ -796,11 +860,11 @@
         arrow) fades out — only the question side stays
      2: cm-diagram zooms out (scale down + anchored left) to free up room
         on the right for the new components
-     3: "Another API" box + getForecast() arrow appear
-     4: "MCP server" box + getStockPrice() arrow appear
+     3: "Server" box + getForecast arrow appear
+     4: "MCP Server" box + getStockPrice arrow appear
      5: LLM thinking pulse (cm-model-box)
-     6: MCP server thinking pulse (tf-box-mcp)
-     7: "$370" label appears below the getStockPrice() arrow
+     6: MCP Server thinking pulse (tf-box-mcp)
+     7: "$370" label appears below the getStockPrice arrow
      8: LLM thinking pulse again (cm-model-box)
      9: Response arrow (cm-arrow-r2) reappears with "Response" label
      10: Response bubble (cm-bubble-r) reappears with stock-price answer
@@ -808,7 +872,7 @@
          cm-arrow-r (getStockPrice chip) and cm-arrow-19 ($370) stay hidden
          so we keep the simplified Question → Response view; cm-arrow-r2
          stays at its lifted top so it sits cleanly under cm-arrow-q.
-     Note: cm-arrow-r (getStockPrice() chip arrow) and cm-arrow-19 ($370)
+     Note: cm-arrow-r (getStockPrice chip arrow) and cm-arrow-19 ($370)
      stay hidden through all of these — they belong to the original chat
      loop, not this simplified Question → LLM → Response variant. */
   section.slide[data-tf-step="1"] .cm-bubble-r,
@@ -877,7 +941,7 @@
   }
 
   /* Right-side panel: short, separate horizontal SVG arrows ending at two
-     small dark boxes (Another API, MCP server). Sized to match the
+     small dark boxes (Server, MCP Server). Sized to match the
      cm-diagram's 0.75 scale so the right side doesn't look bigger than the
      LLM. Boxes and chip labels are absolutely positioned in the slide's
      1920×1080 design coords. */
@@ -982,7 +1046,7 @@
   section.slide[data-tf-step="9"] .tf-box-mcp,
   section.slide[data-tf-step="10"] .tf-box-mcp { opacity: 1; transform: translateY(0); }
 
-  /* "$370" label below the getStockPrice() arrow, revealed at step 7+. Uses
+  /* "$370" label below the getStockPrice arrow, revealed at step 7+. Uses
      the same orange/brown style as slide 4's $370 label. */
   .tf-stock-result {
     position: absolute;
@@ -1002,7 +1066,7 @@
   section.slide[data-tf-step="9"] .tf-stock-result,
   section.slide[data-tf-step="10"] .tf-stock-result { opacity: 1; }
 
-  /* Thinking pulse for the MCP server box. Reuses the existing cm-pulse-bg
+  /* Thinking pulse for the MCP Server box. Reuses the existing cm-pulse-bg
      keyframes for the background flash; the green ring uses tf-pulse so the
      base box-shadow matches tf-box's 4px 4px shadow. Each keyframe keeps
      translateY(0) so the existing transform transition doesn't re-trigger
@@ -1019,11 +1083,11 @@
   /* Tools · final 2 slide — stepped reveal:
      0: default — frozen state inherited from slide 5 (chips show getForecast/
         getStockPrice; question = Tesla; response = $370 answer)
-     1: chips swap to toggleLight()/toggleHeater()
+     1: chips swap to toggleLight/toggleHeater
      2: response bubble fades out; question bubble swaps text to
         "Turn on the light" via a quick fade-out / fade-in
      3: LLM thinking pulse (cm-model-box)
-     4: cm-arrow-r reveals "toggleLight() + ON" overlay (replaces "Response")
+     4: cm-arrow-r reveals "toggleLight + ON" overlay (replaces "Response")
      5: Chat thinking pulse (cm-chat-box)
      6: response bubble re-appears with "Done" */
   section.slide[data-label="Tools · final 2"] .tf2-chip-new { display: none; }
@@ -1059,7 +1123,7 @@
   section.slide[data-label="Tools · final 2"][data-tf2-step="6"] .tf2-bubble-r-toggle { display: inline; }
 
   /* tf2-resp-chip overlay swaps the cm-arrow-r2 "Response" label with the
-     "toggleLight() + ON" chip at steps 4-5, then back to "Response" at step 6
+     "toggleLight + ON" chip at steps 4-5, then back to "Response" at step 6
      (when the response bubble re-appears with "Done"). cm-arrow-r2 has
      overflow:hidden by default which would clip the taller chip — override
      to visible on this slide. */
@@ -1092,16 +1156,16 @@
      first click, data-tf3-step is set on the slide and the rules below
      override the inherited state to play through a new flow:
        0: default — frozen tf2-step=6 state (toggleLight/toggleHeater chips,
-          "Turn on the light" Q, "Done" R, "toggleLight() + ON" r2 chip)
+          "Turn on the light" Q, "Done" R, "toggleLight + ON" r2 chip)
        1: clear bubbles, arrows, chips
        2: question bubble re-appears with "Control temperature"
-       3: question arrow re-appears with "+ toggleHeater() + getTemperature()"
+       3: question arrow re-appears with "+ toggleHeater + getTemperature"
        4: LLM thinks (cm-model-box pulse)
-       5: response arrow appears with "getTemperature()" chip
+       5: response arrow appears with "getTemperature" chip
        6: chat thinks (cm-chat-box pulse)
        7: cm-arrow-19 appears with orange/brown "10°C"
        8: LLM thinks again
-       9: cm-arrow-r2 reappears with "toggleHeater()" chip overlay
+       9: cm-arrow-r2 reappears with "toggleHeater" chip overlay
       10: chat thinks
       11: response bubble re-appears with "Done" */
 
@@ -1145,9 +1209,9 @@
     display: inline;
   }
 
-  /* Question-arrow chip swap: keep the first chip ("toggleLight()") as
+  /* Question-arrow chip swap: keep the first chip ("toggleLight") as
      inherited from tf2-step=6, and only swap the second chip's text from
-     "toggleHeater()" → "getTemperature()". Scope the tf2-chip-new hide to
+     "toggleHeater" → "getTemperature". Scope the tf2-chip-new hide to
      `.cm-tools-stock` so the first chip is untouched. */
   .tf3-chip-q2 { display: none; }
   section.slide.tf3-slide[data-tf3-step] .cm-tools-stock .tf2-chip-new {
@@ -1213,7 +1277,7 @@
     opacity: 1;
   }
 
-  /* Step 5+ : cm-arrow-r reveals "getTemperature()" chip overlay (replaces
+  /* Step 5+ : cm-arrow-r reveals "getTemperature" chip overlay (replaces
      the "Response" label). cm-arrow-r is a flex item so its line + chip
      both share one row; let it overflow visible so the chip isn't clipped.
      We also push it down with margin-top: cm-arrow-q's stacked chips
@@ -1304,8 +1368,8 @@
     transform: translateY(0);
   }
 
-  /* Step 9+ : cm-arrow-r2 reappears with "toggleHeater()" chip overlay
-     (replaces the inherited "toggleLight() + ON" overlay, which was hidden
+  /* Step 9+ : cm-arrow-r2 reappears with "toggleHeater" chip overlay
+     (replaces the inherited "toggleLight + ON" overlay, which was hidden
      by the catch-all rule at step 1). */
   section.slide.tf3-slide .tf3-resp-r2-chip {
     position: absolute;
@@ -1428,19 +1492,19 @@
      override the inherited visuals to play through a Pokemon-themed flow:
        1: clear bubbles + arrow text/badges (lines stay visible)
        2: bubble-q "Approaching enemy"
-       3: cm-arrow-q "Question / Context + move() / attack()"
+       3: cm-arrow-q "Question / State + move / attack"
        4: LLM thinks
-       5: cm-arrow-r attack() chip
+       5: cm-arrow-r attack chip
        6: Chat thinks
        7: cm-arrow-19 "10HP" (orange)
        8: LLM thinks
-       9: cm-arrow-r2 attack() chip
+       9: cm-arrow-r2 attack chip
       10: Chat thinks
       11: cm-arrow-fail "0HP" (orange)
       12: LLM thinks
-      13: cm-arrow-retry move() chip
+      13: cm-arrow-retry move chip
       14: fade out previous arrow text/chips (layout reflows to even six-arrow flow)
-      15: fade in "Input" (forward) / "output()" (back) labels */
+      15: fade in "Input" (forward) / "output" (back) labels */
 
   /* All pkmn variant text/chips hidden by default */
   .pkmn-bubble-q,
@@ -1511,7 +1575,7 @@
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .pkmn-q-text-old { display: inline; }
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .pkmn-q-text-new { display: none; }
   /* Scope to chip 1 only — chip 2 (.cm-tools-stock) keeps its own inherited
-     hide rule so "toggleHeater()" doesn't show next to "getTemperature()". */
+     hide rule so "toggleHeater" doesn't show next to "getTemperature". */
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .cm-tools-add .chip:not(.cm-tools-stock) .tf2-chip-new { display: inline; }
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .cm-tools-add .tf3-chip-q2 { display: inline; }
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="1"] .cm-tools-add .pkmn-chip-1 { display: none; }
@@ -1538,7 +1602,7 @@
     opacity: 1;
   }
 
-  /* Step 3+ : cm-arrow-q text + chips reappear ("Question / Context + move() / attack()") */
+  /* Step 3+ : cm-arrow-q text + chips reappear ("Question / State + move / attack") */
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="3"] .cm-diagram .cm-arrow-q > div:nth-child(2),
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="4"] .cm-diagram .cm-arrow-q > div:nth-child(2),
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="5"] .cm-diagram .cm-arrow-q > div:nth-child(2),
@@ -1553,7 +1617,7 @@
     opacity: 1;
   }
 
-  /* Step 5+ : cm-arrow-r text container + pkmn attack() chip overlay show.
+  /* Step 5+ : cm-arrow-r text container + pkmn attack chip overlay show.
      The cm-resp-text "Response" label inherits opacity:0 from the tf3 rules
      at this slide's data-tf3-step="17", so only the chip is actually visible. */
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="5"] .cm-diagram .cm-arrow-r > div:nth-child(2),
@@ -1590,7 +1654,7 @@
     opacity: 1;
   }
 
-  /* Step 9+ : cm-arrow-r2 text container + pkmn attack() chip overlay show */
+  /* Step 9+ : cm-arrow-r2 text container + pkmn attack chip overlay show */
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="9"] .cm-diagram .cm-arrow.cm-arrow-r2 > div:nth-child(2),
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="10"] .cm-diagram .cm-arrow.cm-arrow-r2 > div:nth-child(2),
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="11"] .cm-diagram .cm-arrow.cm-arrow-r2 > div:nth-child(2),
@@ -1615,7 +1679,7 @@
 
   /* Step 12 : LLM thinking pulse — handled in JS, no CSS gating needed. */
 
-  /* Step 13 : cm-arrow-retry text container + pkmn move() chip reveal */
+  /* Step 13 : cm-arrow-retry text container + pkmn move chip reveal */
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="13"] .cm-diagram .cm-arrow.cm-arrow-retry > div:nth-child(2) {
     opacity: 1;
   }
@@ -1625,7 +1689,7 @@
 
   /* Steps 14 + 15 : two-stage swap. At step 14 the previous text/badges fade
      out (layout already restructured to even six-arrow flow); at step 15 the
-     new "Input" / "output()" labels fade in over the same positions. */
+     new "Input" / "output" labels fade in over the same positions. */
 
   /* Originals: opacity transition so they fade rather than vanish */
   section.slide.tf3-slide.pkmn-slide .cm-arrow-q .pkmn-q-text-new,
@@ -1695,7 +1759,7 @@
     opacity: 0;
   }
 
-  /* Step 15 : fade in the new "Input" / "output()" labels */
+  /* Step 15 : fade in the new "Input" / "output" labels */
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .pkmn-final-input,
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .pkmn-final-output {
     opacity: 1;
@@ -1731,7 +1795,7 @@
   }
   /* Uniform text container height: content centers in a fixed slot so each
      arrow is the same total height regardless of whether the visible label is
-     34px text ("Input") or a 24px chip ("output()"). */
+     34px text ("Input") or a 24px chip ("output"). */
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="14"] .cm-diagram .cm-arrow > div:nth-child(2),
   section.slide.tf3-slide.pkmn-slide[data-pkmn-step="15"] .cm-diagram .cm-arrow > div:nth-child(2) {
     height: 50px;
@@ -1750,18 +1814,18 @@
   }
 
   /* === Slide 9 (.pkmn-slide #2) — Self-driving-car flow ===
-     Slide enters as the frozen six-arrow "Input/output()" state from slide 8.
+     Slide enters as the frozen six-arrow "Input/output" state from slide 8.
      Each click sets data-car-step (1→9) and toggles a corresponding class on
      the slide so the labels swap to a self-driving-car narrative:
        1: chat user bubble  "Approaching enemy"  → "Drive a car"
        2: top Input         "Input"      → "Car is stationary"
        3: LLM thinking pulse
-       4: top output()      "output()"   → accelerate()
+       4: top output      "output"   → accelerate
        5: Chat thinking pulse
        6: middle Input      "Input"      → "Nearing red light"
-       7: middle output()   "output()"   → stop()
+       7: middle output   "output"   → stop
        8: bottom Input      "Input"      → "Green light"
-       9: bottom output()   "output()"   → accelerate() */
+       9: bottom output   "output"   → accelerate */
   section.slide.pkmn-slide .car-bubble-q,
   section.slide.pkmn-slide .car-input-1,
   section.slide.pkmn-slide .car-input-2,
@@ -1826,13 +1890,13 @@
 
   /* === Slide 9 — rocket-launch flow (clicks 10-17) ===
        10: bubble "Drive a car" → "Launch a rocket to the moon"; all car arrow
-           labels removed (revert to Input / output()).
+           labels removed (revert to Input / output).
        11: top Input        → "All systems OK"
-       12: top output()     → mainEngineStart()
+       12: top output     → mainEngineStart
        13: middle Input     → "Altitude 50km"
-       14: middle output()  → stageSeparation()
+       14: middle output  → stageSeparation
        15: bottom Input     → "Approach moon"
-       16: bottom output()  → deployLander()
+       16: bottom output  → deployLander
        17: response bubble re-appears with "Successfully landed" */
   section.slide.pkmn-slide .rocket-bubble-q,
   section.slide.pkmn-slide .rocket-bubble-r,
@@ -1872,7 +1936,7 @@
   /* Step 10 — bubble swap. .car-show-bubble stays on the section to keep the
      "Approaching enemy" pkmn variant hidden; .rocket-show-bubble layers on top to
      hide car-bubble-q and show rocket-bubble-q. The car-show-input/output
-     classes get removed in JS so pkmn-final-* fades back to "Input"/"output()". */
+     classes get removed in JS so pkmn-final-* fades back to "Input"/"output". */
   section.slide.tf3-slide.pkmn-slide.rocket-show-bubble .cm-bubble-q .car-bubble-q { display: none; }
   section.slide.tf3-slide.pkmn-slide.rocket-show-bubble .cm-bubble-q .rocket-bubble-q { display: inline; }
   /* Wider max-width while the rocket bubble is shown so "Launch a rocket to
@@ -2014,7 +2078,7 @@
   "Here's the shape of the next half-hour. First I'll refresh the basic mental model of an LLM — just so we're all on the same page. Then we'll add one idea on top: tools. Once you have tools, I'll walk through the agentic loop, show a few concrete examples, and finish with some practical tips and a look at where this is heading. By the end you should feel confident that you could go home and wire an LLM up to something in your own life.",
   "Quick refresher on what an LLM actually is from the outside. You give it text, it gives you text back. That's the whole contract. The chat product wraps a friendly UI around it, but underneath every message is just a request–response. Today's question is: how do we get from this — a friendly box that answers questions — to something that actually *does* things in the real world?",
   "The answer is one concept: tools. When you call the API, you can hand the model a menu of functions it's allowed to call. It doesn't execute them — it just *asks* you to. You run the function, hand the result back, and the model continues. That's it. That's the whole trick. Everything else in this talk is a variation on that idea.",
-  "Here's the simplest case: a read-only tool. The user asks about the weather. On its own, the model doesn't know — its training data is stale and it has no live connection to anything. But if we've given it a getForecast tool, it can say 'please call getForecast with Tokyo'. Our code runs the real API, hands the result back, and now the model composes a normal-sounding answer. Tools plug the model into anything with an API — maps, search, your company's database, MCP servers, whatever.",
+  "Here's the simplest case: a read-only tool. The user asks about the weather. On its own, the model doesn't know — its training data is stale and it has no live connection to anything. But if we've given it a getForecast tool, it can say 'please call getForecast with Tokyo'. Our code runs the real API, hands the result back, and now the model composes a normal-sounding answer. Tools plug the model into anything with an API — maps, search, your company's database, MCP Servers, whatever.",
   "Now the more interesting case: tools that don't just *read*, they *do*. Same mechanism — the model picks a function and arguments — but this time the function flips a light, sends an email, charges a card. This is the moment the LLM stops being a chatbot and starts being an actor. Everything I show for the rest of the talk lives on this side of the line.",
   "Actions rarely work on the first try. The heater turns on but the temperature doesn't move, or an API call fails. So you don't just call one tool — you loop. The model acts, sees the result, decides what to do next, acts again, until the goal is met or it gives up. This loop is what people mean when they say 'agent'. Worth knowing: every pass through the loop re-sends the whole conversation, so tokens and cost grow with every step. Keep loops tight.",
   "One easy optimisation: the model can request several tool calls in a single turn. If three of the actions are independent, fire them off in parallel, collect the results, and hand them back together. Fewer round-trips, less cost, faster response. Most provider APIs support this out of the box — you just have to remember to actually use it.",
@@ -2299,8 +2363,8 @@
             <div class="cm-tools-add">
               <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">+</span>
               <span class="cm-forecast-wrap">
-                <span class="chip">getForecast()</span>
-                <span class="chip cm-tools-stock">getStockPrice()</span>
+                <span class="chip">getForecast</span>
+                <span class="chip cm-tools-stock">getStockPrice</span>
               </span>
             </div>
           </div>
@@ -2312,7 +2376,7 @@
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="cm-resp-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
-            <span class="cm-resp-chip" style="position: absolute; display: flex; align-items: center; gap: 12px; white-space: nowrap;"><span class="chip"><span class="cm-resp-chip-old">getForecast()</span><span class="cm-resp-chip-stock">getStockPrice()</span></span><span class="cm-resp-chip-old cm-resp-tokyo" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tokyo</span><span class="cm-resp-chip-stock cm-resp-tesla" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tesla</span></span>
+            <span class="cm-resp-chip" style="position: absolute; display: flex; align-items: center; gap: 12px; white-space: nowrap;"><span class="chip"><span class="cm-resp-chip-old">getForecast</span><span class="cm-resp-chip-stock">getStockPrice</span></span><span class="cm-resp-chip-old cm-resp-tokyo" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tokyo</span><span class="cm-resp-chip-stock cm-resp-tesla" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tesla</span></span>
             <span class="cm-resp-code" style="position: absolute; font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink); white-space: nowrap;">&lt;code/&gt;</span>
           </div>
         </div>
@@ -2440,8 +2504,8 @@
             <div class="cm-tools-add">
               <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">+</span>
               <span class="cm-forecast-wrap">
-                <span class="chip">getForecast()</span>
-                <span class="chip cm-tools-stock">getStockPrice()</span>
+                <span class="chip">getForecast</span>
+                <span class="chip cm-tools-stock">getStockPrice</span>
               </span>
             </div>
           </div>
@@ -2453,7 +2517,7 @@
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="cm-resp-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
-            <span class="cm-resp-chip" style="position: absolute; display: flex; align-items: center; gap: 12px; white-space: nowrap;"><span class="chip"><span class="cm-resp-chip-old">getForecast()</span><span class="cm-resp-chip-stock">getStockPrice()</span></span><span class="cm-resp-chip-old cm-resp-tokyo" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tokyo</span><span class="cm-resp-chip-stock cm-resp-tesla" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tesla</span></span>
+            <span class="cm-resp-chip" style="position: absolute; display: flex; align-items: center; gap: 12px; white-space: nowrap;"><span class="chip"><span class="cm-resp-chip-old">getForecast</span><span class="cm-resp-chip-stock">getStockPrice</span></span><span class="cm-resp-chip-old cm-resp-tokyo" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tokyo</span><span class="cm-resp-chip-stock cm-resp-tesla" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tesla</span></span>
             <span class="cm-resp-code" style="position: absolute; font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink); white-space: nowrap;">&lt;code/&gt;</span>
           </div>
         </div>
@@ -2543,7 +2607,7 @@
       </div>
     </div>
 
-    <!-- Right-side panel: API + MCP server boxes, revealed at tf-step 3 / 4.
+    <!-- Right-side panel: API + MCP Server boxes, revealed at tf-step 3 / 4.
          Arrows are an SVG layer so they can angle from a common LLM-side
          origin to each box without flex/rotation gymnastics. -->
     <svg class="tf-arrows-svg" viewBox="0 0 1920 1080" preserveAspectRatio="none">
@@ -2555,10 +2619,10 @@
       <line class="tf-svg-line tf-svg-api" x1="1392" y1="689" x2="1592" y2="689" marker-end="url(#tfArrowTip)"/>
       <line class="tf-svg-line tf-svg-mcp" x1="1392" y1="843" x2="1592" y2="843" marker-end="url(#tfArrowTip)"/>
     </svg>
-    <span class="chip tf-chip tf-chip-api">getForecast()</span>
-    <span class="chip tf-chip tf-chip-mcp">getStockPrice()</span>
-    <div class="tf-box tf-box-api">Another API</div>
-    <div class="tf-box tf-box-mcp">MCP server</div>
+    <span class="chip tf-chip tf-chip-api">getForecast</span>
+    <span class="chip tf-chip tf-chip-mcp">getStockPrice</span>
+    <div class="tf-box tf-box-api">Server</div>
+    <div class="tf-box tf-box-mcp">MCP Server</div>
     <div class="tf-stock-result">$370</div>
   </section>
 
@@ -2604,8 +2668,8 @@
             <div class="cm-tools-add">
               <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">+</span>
               <span class="cm-forecast-wrap">
-                <span class="chip"><span class="tf2-chip-old">getForecast()</span><span class="tf2-chip-new">toggleLight()</span></span>
-                <span class="chip cm-tools-stock"><span class="tf2-chip-old">getStockPrice()</span><span class="tf2-chip-new">toggleHeater()</span></span>
+                <span class="chip"><span class="tf2-chip-old">getForecast</span><span class="tf2-chip-new">toggleLight</span></span>
+                <span class="chip cm-tools-stock"><span class="tf2-chip-old">getStockPrice</span><span class="tf2-chip-new">toggleHeater</span></span>
               </span>
             </div>
           </div>
@@ -2626,7 +2690,7 @@
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="cm-arrow-r2-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
-            <span class="tf2-resp-chip"><span class="chip">toggleLight()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+            <span class="tf2-resp-chip"><span class="chip">toggleLight</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
           </div>
         </div>
       </div>
@@ -2737,8 +2801,8 @@
             <div class="cm-tools-add">
               <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">+</span>
               <span class="cm-forecast-wrap">
-                <span class="chip"><span class="tf2-chip-old">getForecast()</span><span class="tf2-chip-new">toggleLight()</span></span>
-                <span class="chip cm-tools-stock"><span class="tf2-chip-old">getStockPrice()</span><span class="tf2-chip-new">toggleHeater()</span><span class="tf3-chip-q2">getTemperature()</span></span>
+                <span class="chip"><span class="tf2-chip-old">getForecast</span><span class="tf2-chip-new">toggleLight</span></span>
+                <span class="chip cm-tools-stock"><span class="tf2-chip-old">getStockPrice</span><span class="tf2-chip-new">toggleHeater</span><span class="tf3-chip-q2">getTemperature</span></span>
               </span>
             </div>
           </div>
@@ -2750,7 +2814,7 @@
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="cm-resp-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
-            <span class="tf3-resp-r-chip"><span class="chip">getTemperature()</span></span>
+            <span class="tf3-resp-r-chip"><span class="chip">getTemperature</span></span>
           </div>
         </div>
         <div class="cm-arrow cm-arrow-19" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
@@ -2769,8 +2833,8 @@
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="cm-arrow-r2-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
-            <span class="tf2-resp-chip"><span class="chip">toggleLight()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
-            <span class="tf3-resp-r2-chip"><span class="chip">toggleHeater()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+            <span class="tf2-resp-chip"><span class="chip">toggleLight</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+            <span class="tf3-resp-r2-chip"><span class="chip">toggleHeater</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
           </div>
         </div>
         <!-- Step 13+: Chat → LLM "Fail" arrow (orange/brown text, same direction
@@ -2784,14 +2848,14 @@
             <div class="tf3-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">20°C</div>
           </div>
         </div>
-        <!-- Step 15+: LLM → Chat retry arrow with toggleHeater() badge -->
+        <!-- Step 15+: LLM → Chat retry arrow with toggleHeater badge -->
         <div class="cm-arrow cm-arrow-retry" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
           <div style="display:flex; align-items:center; width: 100%;">
             <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 18px solid var(--ink);"></div>
             <div style="flex:1; height: 3px; background: var(--ink);"></div>
           </div>
           <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
-            <span class="chip">toggleHeater()</span>
+            <span class="chip">toggleHeater</span>
             <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ OFF</span>
           </div>
         </div>
@@ -2900,12 +2964,12 @@
             <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
           </div>
           <div style="display:flex; align-items:center; white-space: nowrap;">
-            <div style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);"><span class="pkmn-q-text-old">Prompt</span><span class="pkmn-q-text-new">Prompt / Context</span></div>
+            <div style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);"><span class="pkmn-q-text-old">Prompt</span><span class="pkmn-q-text-new">Prompt / State</span></div>
             <div class="cm-tools-add">
               <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">+</span>
               <span class="cm-forecast-wrap">
-                <span class="chip"><span class="tf2-chip-old">getForecast()</span><span class="tf2-chip-new">toggleLight()</span><span class="pkmn-chip-1">move()</span></span>
-                <span class="chip cm-tools-stock"><span class="tf2-chip-old">getStockPrice()</span><span class="tf2-chip-new">toggleHeater()</span><span class="tf3-chip-q2">getTemperature()</span><span class="pkmn-chip-2">attack()</span></span>
+                <span class="chip"><span class="tf2-chip-old">getForecast</span><span class="tf2-chip-new">toggleLight</span><span class="pkmn-chip-1">move</span></span>
+                <span class="chip cm-tools-stock"><span class="tf2-chip-old">getStockPrice</span><span class="tf2-chip-new">toggleHeater</span><span class="tf3-chip-q2">getTemperature</span><span class="pkmn-chip-2">attack</span></span>
               </span>
             </div>
             <div class="pkmn-final-input">Input</div>
@@ -2918,9 +2982,9 @@
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="cm-resp-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
-            <span class="tf3-resp-r-chip"><span class="chip">getTemperature()</span></span>
-            <span class="pkmn-resp-r-chip"><span class="chip">attack()</span></span>
-            <span class="pkmn-final-output"><span class="chip">output()</span></span>
+            <span class="tf3-resp-r-chip"><span class="chip">getTemperature</span></span>
+            <span class="pkmn-resp-r-chip"><span class="chip">attack</span></span>
+            <span class="pkmn-final-output"><span class="chip">output</span></span>
           </div>
         </div>
         <div class="cm-arrow cm-arrow-19" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
@@ -2931,6 +2995,12 @@
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="tf3-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">10°C</div>
             <div class="pkmn-arrow-19-history">History +</div>
+            <div class="pkmn-arrow-19-state">
+              <span class="pkmn-state-text">Prompt / State</span>
+              <span class="pkmn-state-plus">+</span>
+              <span class="chip">move</span>
+              <span class="chip">attack</span>
+            </div>
             <div class="pkmn-arrow-19-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">10HP</div>
             <div class="pkmn-final-input">Input</div>
           </div>
@@ -2942,10 +3012,10 @@
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="cm-arrow-r2-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
-            <span class="tf2-resp-chip"><span class="chip">toggleLight()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
-            <span class="tf3-resp-r2-chip"><span class="chip">toggleHeater()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
-            <span class="pkmn-resp-r2-chip"><span class="chip">attack()</span></span>
-            <span class="pkmn-final-output"><span class="chip">output()</span></span>
+            <span class="tf2-resp-chip"><span class="chip">toggleLight</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+            <span class="tf3-resp-r2-chip"><span class="chip">toggleHeater</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+            <span class="pkmn-resp-r2-chip"><span class="chip">attack</span></span>
+            <span class="pkmn-final-output"><span class="chip">output</span></span>
           </div>
         </div>
         <div class="cm-arrow cm-arrow-fail" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
@@ -2956,6 +3026,12 @@
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="tf3-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">20°C</div>
             <div class="pkmn-arrow-fail-history">History +</div>
+            <div class="pkmn-arrow-fail-state">
+              <span class="pkmn-state-text">Prompt / State</span>
+              <span class="pkmn-state-plus">+</span>
+              <span class="chip">move</span>
+              <span class="chip">attack</span>
+            </div>
             <div class="pkmn-arrow-fail-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">0HP</div>
             <div class="pkmn-final-input">Input</div>
           </div>
@@ -2966,9 +3042,9 @@
             <div style="flex:1; height: 3px; background: var(--ink);"></div>
           </div>
           <div style="display: flex; align-items: center; justify-content: center;">
-            <span class="tf3-arrow-retry-chip"><span class="chip">toggleHeater()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ OFF</span></span>
-            <span class="pkmn-arrow-retry-chip"><span class="chip">move()</span></span>
-            <span class="pkmn-final-output"><span class="chip">output()</span></span>
+            <span class="tf3-arrow-retry-chip"><span class="chip">toggleHeater</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ OFF</span></span>
+            <span class="pkmn-arrow-retry-chip"><span class="chip">move</span></span>
+            <span class="pkmn-final-output"><span class="chip">output</span></span>
           </div>
         </div>
       </div>
@@ -3046,8 +3122,8 @@
        slide in the deck. -->
   <section class="slide tf3-slide pkmn-slide" data-label="Tools · final 2" data-tools-step="20" data-tools-content="stock" data-tf2-step="6" data-tf3-step="17" data-pkmn-step="15">
     <div class="chrome top"><span><span class="dot"></span>Chapter 01 · Foundations</span><span>09 / 17</span></div>
-    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>基本のチャット</div>
-    <h2 class="title" style="font-weight: 600; margin-top: 24px; margin-bottom: 37px;">Tools</h2>
+    <div class="eyebrow" style="margin-top: 40px;"><span class="sym">▍</span>エージェントループ</div>
+    <h2 class="title" style="font-weight: 600; margin-top: 24px; margin-bottom: 37px;">Agentic Loop</h2>
 
     <div class="cm-diagram" data-cm-step="12" style="display:grid; grid-template-columns: 1fr 1.1fr 1fr; align-items:center; gap: 40px; margin-top: 40px;">
 
@@ -3075,12 +3151,12 @@
             <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid var(--ink);"></div>
           </div>
           <div style="display:flex; align-items:center; white-space: nowrap;">
-            <div style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);"><span class="pkmn-q-text-old">Prompt</span><span class="pkmn-q-text-new">Prompt / Context</span></div>
+            <div style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);"><span class="pkmn-q-text-old">Prompt</span><span class="pkmn-q-text-new">Prompt / State</span></div>
             <div class="cm-tools-add">
               <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">+</span>
               <span class="cm-forecast-wrap">
-                <span class="chip"><span class="tf2-chip-old">getForecast()</span><span class="tf2-chip-new">toggleLight()</span><span class="pkmn-chip-1">move()</span></span>
-                <span class="chip cm-tools-stock"><span class="tf2-chip-old">getStockPrice()</span><span class="tf2-chip-new">toggleHeater()</span><span class="tf3-chip-q2">getTemperature()</span><span class="pkmn-chip-2">attack()</span></span>
+                <span class="chip"><span class="tf2-chip-old">getForecast</span><span class="tf2-chip-new">toggleLight</span><span class="pkmn-chip-1">move</span></span>
+                <span class="chip cm-tools-stock"><span class="tf2-chip-old">getStockPrice</span><span class="tf2-chip-new">toggleHeater</span><span class="tf3-chip-q2">getTemperature</span><span class="pkmn-chip-2">attack</span></span>
               </span>
             </div>
             <div class="pkmn-final-input">Input</div>
@@ -3095,11 +3171,11 @@
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="cm-resp-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
-            <span class="tf3-resp-r-chip"><span class="chip">getTemperature()</span></span>
-            <span class="pkmn-resp-r-chip"><span class="chip">attack()</span></span>
-            <span class="pkmn-final-output"><span class="chip">output()</span></span>
-            <span class="car-output-1"><span class="chip">accelerate()</span></span>
-            <span class="rocket-output-1"><span class="chip">mainEngineStart()</span></span>
+            <span class="tf3-resp-r-chip"><span class="chip">getTemperature</span></span>
+            <span class="pkmn-resp-r-chip"><span class="chip">attack</span></span>
+            <span class="pkmn-final-output"><span class="chip">output</span></span>
+            <span class="car-output-1"><span class="chip">accelerate</span></span>
+            <span class="rocket-output-1"><span class="chip">mainEngineStart</span></span>
           </div>
         </div>
         <div class="cm-arrow cm-arrow-19" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
@@ -3122,12 +3198,12 @@
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="cm-arrow-r2-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
-            <span class="tf2-resp-chip"><span class="chip">toggleLight()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
-            <span class="tf3-resp-r2-chip"><span class="chip">toggleHeater()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
-            <span class="pkmn-resp-r2-chip"><span class="chip">attack()</span></span>
-            <span class="pkmn-final-output"><span class="chip">output()</span></span>
-            <span class="car-output-3"><span class="chip">accelerate()</span></span>
-            <span class="rocket-output-3"><span class="chip">deployLander()</span></span>
+            <span class="tf2-resp-chip"><span class="chip">toggleLight</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+            <span class="tf3-resp-r2-chip"><span class="chip">toggleHeater</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+            <span class="pkmn-resp-r2-chip"><span class="chip">attack</span></span>
+            <span class="pkmn-final-output"><span class="chip">output</span></span>
+            <span class="car-output-3"><span class="chip">accelerate</span></span>
+            <span class="rocket-output-3"><span class="chip">deployLander</span></span>
           </div>
         </div>
         <div class="cm-arrow cm-arrow-fail" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
@@ -3149,11 +3225,11 @@
             <div style="flex:1; height: 3px; background: var(--ink);"></div>
           </div>
           <div style="display: flex; align-items: center; justify-content: center;">
-            <span class="tf3-arrow-retry-chip"><span class="chip">toggleHeater()</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
-            <span class="pkmn-arrow-retry-chip"><span class="chip">move()</span></span>
-            <span class="pkmn-final-output"><span class="chip">output()</span></span>
-            <span class="car-output-2"><span class="chip">stop()</span></span>
-            <span class="rocket-output-2"><span class="chip">stageSeparation()</span></span>
+            <span class="tf3-arrow-retry-chip"><span class="chip">toggleHeater</span><span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ ON</span></span>
+            <span class="pkmn-arrow-retry-chip"><span class="chip">move</span></span>
+            <span class="pkmn-final-output"><span class="chip">output</span></span>
+            <span class="car-output-2"><span class="chip">stop</span></span>
+            <span class="rocket-output-2"><span class="chip">stageSeparation</span></span>
           </div>
         </div>
       </div>
@@ -3324,8 +3400,8 @@
             <div class="cm-tools-add">
               <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">+</span>
               <span class="cm-forecast-wrap">
-                <span class="chip">getForecast()</span>
-                <span class="chip cm-tools-stock">getStockPrice()</span>
+                <span class="chip">getForecast</span>
+                <span class="chip cm-tools-stock">getStockPrice</span>
               </span>
             </div>
           </div>
@@ -3337,7 +3413,7 @@
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="cm-resp-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
-            <span class="cm-resp-chip" style="position: absolute; display: flex; align-items: center; gap: 12px; white-space: nowrap;"><span class="chip"><span class="cm-resp-chip-old">getForecast()</span><span class="cm-resp-chip-stock">getStockPrice()</span></span><span class="cm-resp-chip-old cm-resp-tokyo" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tokyo</span><span class="cm-resp-chip-stock cm-resp-tesla" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tesla</span></span>
+            <span class="cm-resp-chip" style="position: absolute; display: flex; align-items: center; gap: 12px; white-space: nowrap;"><span class="chip"><span class="cm-resp-chip-old">getForecast</span><span class="cm-resp-chip-stock">getStockPrice</span></span><span class="cm-resp-chip-old cm-resp-tokyo" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tokyo</span><span class="cm-resp-chip-stock cm-resp-tesla" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tesla</span></span>
             <span class="cm-resp-code" style="position: absolute; font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink); white-space: nowrap;">&lt;code/&gt;</span>
           </div>
         </div>
@@ -3427,7 +3503,7 @@
       </div>
     </div>
 
-    <!-- Right-side panel: API + MCP server boxes, revealed at tf-step 3 / 4.
+    <!-- Right-side panel: API + MCP Server boxes, revealed at tf-step 3 / 4.
          Arrows are an SVG layer so they can angle from a common LLM-side
          origin to each box without flex/rotation gymnastics. -->
     <svg class="tf-arrows-svg" viewBox="0 0 1920 1080" preserveAspectRatio="none">
@@ -3439,10 +3515,10 @@
       <line class="tf-svg-line tf-svg-api" x1="1392" y1="689" x2="1592" y2="689" marker-end="url(#tfArrowTipRecap)"/>
       <line class="tf-svg-line tf-svg-mcp" x1="1392" y1="843" x2="1592" y2="843" marker-end="url(#tfArrowTipRecap)"/>
     </svg>
-    <span class="chip tf-chip tf-chip-api">getForecast()</span>
-    <span class="chip tf-chip tf-chip-mcp">getStockPrice()</span>
-    <div class="tf-box tf-box-api">Another API</div>
-    <div class="tf-box tf-box-mcp">MCP server</div>
+    <span class="chip tf-chip tf-chip-api">getForecast</span>
+    <span class="chip tf-chip tf-chip-mcp">getStockPrice</span>
+    <div class="tf-box tf-box-api">Server</div>
+    <div class="tf-box tf-box-mcp">MCP Server</div>
     <div class="tf-stock-result">$370</div>
   </section>
 
@@ -3512,8 +3588,8 @@
             <div class="cm-tools-add">
               <span style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--warn);">+</span>
               <span class="cm-forecast-wrap">
-                <span class="chip">getForecast()</span>
-                <span class="chip cm-tools-stock">getStockPrice()</span>
+                <span class="chip">getForecast</span>
+                <span class="chip cm-tools-stock">getStockPrice</span>
               </span>
             </div>
           </div>
@@ -3525,7 +3601,7 @@
           </div>
           <div style="position: relative; display: flex; align-items: center; justify-content: center;">
             <div class="cm-resp-text" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">Response</div>
-            <span class="cm-resp-chip" style="position: absolute; display: flex; align-items: center; gap: 12px; white-space: nowrap;"><span class="chip"><span class="cm-resp-chip-old">getForecast()</span><span class="cm-resp-chip-stock">getStockPrice()</span></span><span class="cm-resp-chip-old cm-resp-tokyo" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tokyo</span><span class="cm-resp-chip-stock cm-resp-tesla" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tesla</span></span>
+            <span class="cm-resp-chip" style="position: absolute; display: flex; align-items: center; gap: 12px; white-space: nowrap;"><span class="chip"><span class="cm-resp-chip-old">getForecast</span><span class="cm-resp-chip-stock">getStockPrice</span></span><span class="cm-resp-chip-old cm-resp-tokyo" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tokyo</span><span class="cm-resp-chip-stock cm-resp-tesla" style="font-family: 'Comfortaa', var(--font-display); font-weight: 500; font-size: 34px; color: var(--ink);">+ Tesla</span></span>
           </div>
         </div>
         <div class="cm-arrow cm-arrow-19" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
@@ -3621,10 +3697,10 @@
       <line class="tf-svg-line tf-svg-api" x1="1392" y1="689" x2="1592" y2="689" marker-end="url(#tfArrowTipRecap2)"/>
       <line class="tf-svg-line tf-svg-mcp" x1="1392" y1="843" x2="1592" y2="843" marker-end="url(#tfArrowTipRecap2)"/>
     </svg>
-    <span class="chip tf-chip tf-chip-api">getForecast()</span>
-    <span class="chip tf-chip tf-chip-mcp">getStockPrice()</span>
-    <div class="tf-box tf-box-api">Another API</div>
-    <div class="tf-box tf-box-mcp">MCP server</div>
+    <span class="chip tf-chip tf-chip-api">getForecast</span>
+    <span class="chip tf-chip tf-chip-mcp">getStockPrice</span>
+    <div class="tf-box tf-box-api">Server</div>
+    <div class="tf-box tf-box-mcp">MCP Server</div>
     <div class="tf-stock-result">$370</div>
   </section>
 
@@ -3811,20 +3887,20 @@
     // 0: default — both chat bubbles visible
     // 1: both bubbles hidden
     // 2: request bubble back, response still hidden
-    // 3: "Question" shifts left, "+ getForecast()" fades in
+    // 3: "Question" shifts left, "+ getForecast" fades in
     // 4: LLM thinks
-    // 5: Response label → getForecast() chip
+    // 5: Response label → getForecast chip
     // 6: Chat thinks
     // 7: "19°C and partly cloudy" arrow appears
     // 8: LLM thinks again
     // 9: second Response arrow appears
     // 10: response bubble reappears
-    // 11: getStockPrice() chip fades in below getForecast()
+    // 11: getStockPrice chip fades in below getForecast
     // 12: clear bubbles, getForecast chip, "19°C…" and second "Response"
     //     (arrow lines stay visible)
     // 13: request bubble "What is the stock price of Tesla?"
     // 14: LLM thinks
-    // 15: getStockPrice() chip appears on first response arrow
+    // 15: getStockPrice chip appears on first response arrow
     // 16: Chat thinks
     // 17: "$370" appears where "19°C and partly cloudy" was
     // 18: LLM thinks again
@@ -3851,13 +3927,13 @@
       const s = toolsFinalSlide();
       if (!s) return false;
       const step = toolsStep();
-      // Sub-step at step 5: first click reveals the getForecast() chip,
+      // Sub-step at step 5: first click reveals the getForecast chip,
       // a second click reveals "+ Tokyo" beside it before advancing to step 6.
       if (step === 5 && s.getAttribute('data-tokyo-shown') !== '1') {
         s.setAttribute('data-tokyo-shown', '1');
         return true;
       }
-      // Same pattern at step 15 for the getStockPrice() return badge → "+ Tesla".
+      // Same pattern at step 15 for the getStockPrice return badge → "+ Tesla".
       if (step === 15 && s.getAttribute('data-tesla-shown') !== '1') {
         s.setAttribute('data-tesla-shown', '1');
         return true;
@@ -3891,7 +3967,7 @@
       }
       // At step 12 the bubbles fade out a second time; once they're hidden,
       // swap content to the stock-price example. cm-resp-chip text also
-      // swaps from getForecast() to getStockPrice() while invisible.
+      // swaps from getForecast to getStockPrice while invisible.
       if (next === 12) {
         setTimeout(() => {
           if (s.getAttribute('data-tools-step')) {
@@ -3919,14 +3995,14 @@
 
     // ── Tools · final slide (slide 5) — stepped reveal ──
     // 0: default — frozen final state from slide 4
-    // 1: response side fades away (response bubble, getStockPrice() arrow,
+    // 1: response side fades away (response bubble, getStockPrice arrow,
     //    $370 arrow, second Response arrow) — only the question side stays
     // 2: cm-diagram zooms out (anchored left) so the right side opens up
-    // 3: "Another API" box + getForecast() arrow appear
-    // 4: "MCP server" box + getStockPrice() arrow appear
+    // 3: "Server" box + getForecast arrow appear
+    // 4: "MCP Server" box + getStockPrice arrow appear
     // 5: LLM thinking pulse (cm-model-box)
-    // 6: MCP server thinking pulse (tf-box-mcp)
-    // 7: "$370" label appears below the getStockPrice() arrow
+    // 6: MCP Server thinking pulse (tf-box-mcp)
+    // 7: "$370" label appears below the getStockPrice arrow
     // 8: LLM thinking pulse again (cm-model-box)
     // 9: Response arrow (cm-arrow-r2) reappears with "Response" label
     // 10: Response bubble (cm-bubble-r) reappears with stock-price answer
@@ -3970,7 +4046,7 @@
     // 1: chips swap getForecast/getStockPrice → toggleLight/toggleHeater
     // 2: response bubble fades; question bubble swaps to "Turn on the light"
     // 3: LLM thinking pulse
-    // 4: cm-arrow-r reveals "toggleLight() + ON" chip
+    // 4: cm-arrow-r reveals "toggleLight + ON" chip
     // 5: Chat thinking pulse
     // 6: response bubble re-appears with "Done"
     function toolsFinal2Slide() {
@@ -4004,19 +4080,19 @@
     // ── Tools · final 3 slide (slide 7) — stepped reveal ──
     //  1: cleared (default on slide entry — set inline + by reset)
     //  2: question bubble "Control temperature"
-    //  3: question arrow with "+ toggleLight() / getTemperature()"
+    //  3: question arrow with "+ toggleLight / getTemperature"
     //  4: LLM thinking pulse (cm-model-box)
-    //  5: response arrow with "getTemperature()" chip
+    //  5: response arrow with "getTemperature" chip
     //  6: chat thinking pulse (cm-chat-box)
     //  7: cm-arrow-19 with orange/brown "10°C"
     //  8: LLM thinking pulse again
-    //  9: cm-arrow-r2 reappears with "toggleHeater()" chip
+    //  9: cm-arrow-r2 reappears with "toggleHeater" chip
     // 10: chat thinking pulse
     // 11: response bubble "Done"
     // 12: diagram slides up 140px (Done bubble still visible)
     // 13: Done bubble fades; new "Fail" arrow (Chat→LLM, orange) appears
     // 14: LLM thinking pulse
-    // 15: retry arrow (LLM→Chat) with "toggleHeater()" chip appears
+    // 15: retry arrow (LLM→Chat) with "toggleHeater" chip appears
     // 16: chat thinking pulse (executing the retry action)
     // 17: Done bubble re-appears
     function toolsFinal3Slide() {
@@ -4057,18 +4133,18 @@
     // ── Slide 8 (.pkmn-slide) — Pokemon retry flow ──
     //  1: cleared (bubbles + arrow text/badges hidden, lines stay)
     //  2: bubble-q "Approaching enemy"
-    //  3: cm-arrow-q "Question / Context + move() / attack()"
+    //  3: cm-arrow-q "Question / State + move / attack"
     //  4: LLM thinks (cm-model-box pulse)
-    //  5: cm-arrow-r attack() chip
+    //  5: cm-arrow-r attack chip
     //  6: Chat thinks (cm-chat-box pulse)
     //  7: cm-arrow-19 "10HP" (orange)
     //  8: LLM thinks
-    //  9: cm-arrow-r2 attack() chip
+    //  9: cm-arrow-r2 attack chip
     // 10: Chat thinks
-    // 11: cm-arrow-fail "0HP" → LLM thinks → cm-arrow-retry move() chip
+    // 11: cm-arrow-fail "0HP" → LLM thinks → cm-arrow-retry move chip
     //     (cascades inside one click via timed substep)
     // 14: fade out the previous text/chips (layout settles to even six-arrow flow)
-    // 15: fade in the new "Input" / "output()" labels
+    // 15: fade in the new "Input" / "output" labels
     function pokemonSlide() {
       return stage.querySelector('section.slide.pkmn-slide');
     }
@@ -4080,10 +4156,13 @@
       const s = pokemonSlide();
       if (!s) return false;
       const step = parseInt(s.getAttribute('data-pkmn-step') || '0', 10);
-      // Sub-steps at step 13 (after the retry move() chip — the last move()
+      // Sub-steps at step 13 (after the retry move chip — the last move
       // badge — appears): first click reveals "History +" beside the 10HP
-      // and 0HP arrow labels (which shift right); a second click hides
-      // them again; a third click advances to step 14.
+      // and 0HP arrow labels (which shift right); a second click swaps
+      // "History +" for a "Prompt / State + move/attack" badge cluster
+      // (showing that instead of replaying history, the chat can issue a
+      // fresh request with the full state inline); a third click advances
+      // to step 14.
       if (step === 13) {
         const h = s.getAttribute('data-history-shown');
         if (h !== '1' && h !== '2') {
@@ -4121,19 +4200,19 @@
     //  1: chat user bubble  → "Drive a car"
     //  2: top Input         → "Car is stationary"
     //  3: LLM thinks
-    //  4: top output()      → accelerate()
+    //  4: top output      → accelerate
     //  5: Chat thinks
     //  6: middle Input      → "Nearing red light"
-    //  7: middle output()   → stop()
+    //  7: middle output   → stop
     //  8: bottom Input      → "Green light"
-    //  9: bottom output()   → accelerate()
-    // 10: bubble → "Launch a rocket to the moon"; arrow labels reset to Input/output()
+    //  9: bottom output   → accelerate
+    // 10: bubble → "Launch a rocket to the moon"; arrow labels reset to Input/output
     // 11: top Input         → "All systems OK"
-    // 12: top output()      → mainEngineStart()
+    // 12: top output      → mainEngineStart
     // 13: middle Input      → "Altitude 50km"
-    // 14: middle output()   → stageSeparation()
+    // 14: middle output   → stageSeparation
     // 15: bottom Input      → "Approach moon"
-    // 16: bottom output()   → deployLander()
+    // 16: bottom output   → deployLander
     // 17: response bubble re-appears with "Successfully landed"
     function carSlide() {
       const slides = stage.querySelectorAll('section.slide.pkmn-slide');
@@ -4161,7 +4240,7 @@
       if (next === 9) s.classList.add('car-show-output-3');
       if (next === 10) {
         // Bubble swap to "Launch a rocket to the moon" + revert all arrow
-        // labels to Input / output(). car-show-bubble stays so pkmn-bubble-q
+        // labels to Input / output. car-show-bubble stays so pkmn-bubble-q
         // ("Approaching enemy") remains hidden under the new rocket bubble.
         s.classList.remove(
           'car-show-input-1', 'car-show-input-2', 'car-show-input-3',
@@ -4335,7 +4414,7 @@
     }
 
     // ── Tools · final (recap) slide (14b) — one click swaps the
-    //    "getStockPrice() + Tesla" response chip for "<code/>" text.
+    //    "getStockPrice + Tesla" response chip for "<code/>" text.
     function toolsFinalRecapSlide() {
       return stage.querySelector('section.slide[data-label="Tools · final (recap)"]');
     }
